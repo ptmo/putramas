@@ -125,21 +125,13 @@
       </a>
 
       <nav id="navbar" class="navbar">
-  <ul>
-    <li><a class="nav-link scrollto active" href="index.html">Halaman</a></li>
-    <li><a class="nav-link scrollto" href="gallery.html">Galeri</a></li>
-    <li>
-        <button id="loginButton" class="nav-link scrollto">
-          <i class="bi bi-metamask icon"></i> <!-- Icon MetaMask dari Bootstrap Icons -->
-          Login with MetaMask
-        </button>
-     <div id="wallet-info">
-        <p><strong>Account:</strong> <span id="account-address"></span></p>
-        <p><strong>Balance:</strong> <span id="account-balance"></span></p>
-        <button id="logoutButton">Disconnect</button>
-      </div>
-    </li>
-  </ul>
+       <ul>
+          <li><a class="nav-link scrollto active" href="index" target="_blank">Halaman</a></li>
+          <li><a class="nav-link scrollto" href="gallery" target="_blank">Galeri</a></li>
+          <li><a id="metamaskButton" class="getstarted scrollto">
+    Login with MetaMask
+  </a></li>
+        </ul>
   <i class="bi bi-list mobile-nav-toggle"></i>
 </nav>
     </div>
@@ -531,23 +523,59 @@ function copyToClipboard(text) {
   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="2a43af827254bee03e671cce-|49" defer></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/vef91dfe02fce4ee0ad053f6de4f175db1715022073587" integrity="sha512-sDIX0kl85v1Cl5tu4WGLZCpH/dV9OHbA4YlKCuCiMmOQIk4buzoYDZSFj+TvC71mOBLh8CDC/REgE0GX0xcbjA==" data-cf-beacon='{"rayId":"890ea2c6cad85ff3","r":1,"version":"2024.4.1","token":"b3b7be270a314d819ca7b313ae293dce"}' crossorigin="anonymous"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const isLoggedIn = localStorage.getItem('isLoggedIn');
-      if (isLoggedIn === 'true') {
-        document.getElementById('auth-container').style.display = 'none';
-        document.getElementById('portfolio-details-content').style.display = 'block';
-        updateWalletInfo();
-      }
+  document.addEventListener('DOMContentLoaded', () => {
+    const metamaskButton = document.getElementById('metamaskButton');
+    const authContainer = document.getElementById('auth-container');
+    const portfolioDetails = document.getElementById('portfolio-details-content');
+    const logoutButton = document.getElementById('logoutButton');
+    const accountAddress = document.getElementById('account-address');
+    const accountBalance = document.getElementById('account-balance');
 
-      document.getElementById('loginButton').onclick = async () => {
-        if (typeof window.ethereum !== 'undefined') {
-          const web3 = new Web3(window.ethereum);
-          try {
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const chainId = await web3.eth.getChainId();
-            const allowedNetworks = ['1', '56', '137'];
+    // Check if user is already logged in
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn === 'true') {
+      authContainer.style.display = 'none';
+      portfolioDetails.style.display = 'block';
+      updateWalletInfo();
+      metamaskButton.textContent = 'Your Account'; // Change button text after login
+    }
 
-            if (allowedNetworks.includes(chainId.toString())) {
+    // Event listener for login button click
+    metamaskButton.onclick = async () => {
+      if (typeof window.ethereum !== 'undefined') {
+        const web3 = new Web3(window.ethereum);
+        try {
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+          const chainId = await web3.eth.getChainId();
+          const allowedNetworks = ['1', '56', '137'];
+
+          if (allowedNetworks.includes(chainId.toString())) {
+            const accounts = await web3.eth.getAccounts();
+            const account = accounts[0];
+            const message = 'Please sign this message to log in.';
+            const signature = await web3.eth.personal.sign(message, account, '');
+
+            const signer = await web3.eth.personal.ecRecover(message, signature);
+            if (signer.toLowerCase() === account.toLowerCase()) {
+              authContainer.style.display = 'none';
+              portfolioDetails.style.display = 'block';
+
+              localStorage.setItem('isLoggedIn', 'true');
+              updateWalletInfo();
+              metamaskButton.textContent = 'Your Account'; // Change button text after login
+            } else {
+              alert('Signature verification failed. Please try again.');
+            }
+          } else {
+            alert('Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet.');
+            const network = getNetworkSwitchParams();
+            await ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: network.chainId }]
+            });
+
+            const newChainId = await web3.eth.getChainId();
+            if (allowedNetworks.includes(newChainId.toString())) {
               const accounts = await web3.eth.getAccounts();
               const account = accounts[0];
               const message = 'Please sign this message to log in.';
@@ -555,103 +583,94 @@ function copyToClipboard(text) {
 
               const signer = await web3.eth.personal.ecRecover(message, signature);
               if (signer.toLowerCase() === account.toLowerCase()) {
-                document.getElementById('auth-container').style.display = 'none';
-                document.getElementById('portfolio-details-content').style.display = 'block';
+                authContainer.style.display = 'none';
+                portfolioDetails.style.display = 'block';
 
                 localStorage.setItem('isLoggedIn', 'true');
                 updateWalletInfo();
+                metamaskButton.textContent = 'Your Account'; // Change button text after login
               } else {
                 alert('Signature verification failed. Please try again.');
               }
             } else {
-              alert('Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet.');
-              const network = getNetworkSwitchParams();
-              await ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: network.chainId }]
-              });
-
-              const newChainId = await web3.eth.getChainId();
-              if (allowedNetworks.includes(newChainId.toString())) {
-                const accounts = await web3.eth.getAccounts();
-                const account = accounts[0];
-                const message = 'Please sign this message to log in.';
-                const signature = await web3.eth.personal.sign(message, account, '');
-
-                const signer = await web3.eth.personal.ecRecover(message, signature);
-                if (signer.toLowerCase() === account.toLowerCase()) {
-                  document.getElementById('auth-container').style.display = 'none';
-                  document.getElementById('portfolio-details-content').style.display = 'block';
-
-                  localStorage.setItem('isLoggedIn', 'true');
-                  updateWalletInfo();
-                } else {
-                  alert('Signature verification failed. Please try again.');
-                }
-              } else {
-                alert('Network switch failed. Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet manually.');
-              }
+              alert('Network switch failed. Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet manually.');
             }
-          } catch (error) {
-            console.error(error);
-            alert('An error occurred while connecting to MetaMask.');
           }
-        } else {
-          alert('Please install MetaMask!');
+        } catch (error) {
+          console.error(error);
+          alert('An error occurred while connecting to MetaMask.');
         }
-      };
+      } else {
+        alert('Please install MetaMask!');
+      }
+    };
 
-      document.getElementById('logoutButton').onclick = () => {
-        localStorage.removeItem('isLoggedIn');
-        document.getElementById('auth-container').style.display = 'block';
-        document.getElementById('portfolio-details-content').style.display = 'none';
-      };
+    // Event listener for logout button click
+    logoutButton.onclick = () => {
+      localStorage.removeItem('isLoggedIn');
+      authContainer.style.display = 'block';
+      portfolioDetails.style.display = 'none';
+      metamaskButton.textContent = 'Login with MetaMask'; // Change button text after logout
+    };
 
-      async function updateWalletInfo() {
+    // Function to update wallet info
+    async function updateWalletInfo() {
+      try {
         const web3 = new Web3(window.ethereum);
         const accounts = await web3.eth.getAccounts();
         const account = accounts[0];
         const balance = await web3.eth.getBalance(account);
 
-        document.getElementById('account-address').innerText = account;
-        document.getElementById('account-balance').innerText = web3.utils.fromWei(balance, 'ether') + ' ETH';
+        accountAddress.textContent = account;
+        accountBalance.textContent = web3.utils.fromWei(balance, 'ether') + ' ETH';
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while fetching account info.');
       }
+    }
 
-      if (typeof window.ethereum !== 'undefined') {
-        window.ethereum.on('accountsChanged', (accounts) => {
-          if (accounts.length === 0) {
-            localStorage.removeItem('isLoggedIn');
-            document.getElementById('auth-container').style.display = 'block';
-            document.getElementById('portfolio-details-content').style.display = 'none';
-          } else {
-            updateWalletInfo();
-          }
-        });
+    // Event listener for MetaMask account change
+    if (typeof window.ethereum !== 'undefined') {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length === 0) {
+          localStorage.removeItem('isLoggedIn');
+          authContainer.style.display = 'block';
+          portfolioDetails.style.display = 'none';
+          metamaskButton.textContent = 'Login with MetaMask'; // Change button text after logout
+        } else {
+          updateWalletInfo();
+          metamaskButton.textContent = 'Your Account'; // Change button text after login
+        }
+      });
 
-        window.ethereum.on('chainChanged', (chainId) => {
-          if (!['1', '56', '137'].includes(chainId)) {
-            localStorage.removeItem('isLoggedIn');
-            document.getElementById('auth-container').style.display = 'block';
-            document.getElementById('portfolio-details-content').style.display = 'none';
-          }
-        });
-      }
+      // Event listener for MetaMask network change
+      window.ethereum.on('chainChanged', (chainId) => {
+        if (!['1', '56', '137'].includes(chainId)) {
+          localStorage.removeItem('isLoggedIn');
+          authContainer.style.display = 'block';
+          portfolioDetails.style.display = 'none';
+          metamaskButton.textContent = 'Login with MetaMask'; // Change button text after logout
+        }
+      });
+    }
 
-      function getNetworkSwitchParams() {
-        return {
-          chainId: '1',
-          chainName: 'Ethereum Mainnet',
-          nativeCurrency: {
-            name: 'Ether',
-            symbol: 'ETH',
-            decimals: 18
-          },
-          rpcUrls: ['https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'],
-          blockExplorerUrls: ['https://etherscan.io']
-        };
-      }
-    });
-  </script>
+    // Function to get network switch parameters
+    function getNetworkSwitchParams() {
+      return {
+        chainId: '1',
+        chainName: 'Ethereum Mainnet',
+        nativeCurrency: {
+          name: 'Ether',
+          symbol: 'ETH',
+          decimals: 18
+        },
+        rpcUrls: ['https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'],
+        blockExplorerUrls: ['https://etherscan.io']
+      };
+    }
+  });
+</script>
+
 </body>
 
 </html>
