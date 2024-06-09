@@ -30,6 +30,28 @@
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+  <style>
+  /* Tambahkan efek hover pada tombol navigasi */
+.swiper-button-next,
+.swiper-button-prev {
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  transform: scale(1.2); /* Membesarkan tombol ketika dihover */
+  background-color: rgba(0, 0, 0, 0.5); /* Mengubah warna latar belakang saat hover */
+  border-radius: 50%; /* Membuat tombol menjadi lingkaran */
+}
+
+/* Tambahkan efek ketika tombol diklik */
+.swiper-button-next:active,
+.swiper-button-prev:active {
+  transform: scale(1.1); /* Sedikit mengecilkan tombol ketika diklik */
+  background-color: rgba(0, 0, 0, 0.7); /* Mengubah warna latar belakang saat aktif */
+}
+</style>
   
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
