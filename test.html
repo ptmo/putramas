@@ -467,12 +467,12 @@ function copyToClipboard(text) {
       const web3 = new Web3(window.ethereum);
       try {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
-        let chainId = await web3.eth.getChainId();
+        const chainId = await web3.eth.getChainId();
         
         // Ethereum Mainnet, BSC Mainnet, Polygon Mainnet
-        const allowedNetworks = ['0x1', '0x38', '0x89'];
+        const allowedNetworks = ['1', '56', '137']; // 1 for Ethereum Mainnet, 56 for BSC Mainnet, 137 for Polygon Mainnet
         
-        if (allowedNetworks.includes(chainId)) {
+        if (allowedNetworks.includes(chainId.toString())) {
           // Show portfolio details
           document.getElementById('auth-container').style.display = 'none';
           document.getElementById('portfolio-details').style.display = 'block';
@@ -486,8 +486,8 @@ function copyToClipboard(text) {
           });
 
           // Check if the network switch was successful
-          chainId = await web3.eth.getChainId();
-          if (allowedNetworks.includes(chainId)) {
+          const newChainId = await web3.eth.getChainId();
+          if (allowedNetworks.includes(newChainId.toString())) {
             // Show portfolio details
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('portfolio-details').style.display = 'block';
@@ -507,7 +507,7 @@ function copyToClipboard(text) {
 
   function getNetworkSwitchParams() {
     // Default to Ethereum Mainnet
-    return { chainId: '0x1' };
+    return { chainId: '1' };
   }
 </script>
 </body>
