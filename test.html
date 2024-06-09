@@ -87,20 +87,23 @@
     </section>
 
     <!-- ======= Portfolio Details Section ======= -->
-    <section id="portfolio-details" class="portfolio-details">
-      <div class="container">
-        <div id="auth-container">
-          <button id="loginButton">Login with MetaMask</button>
-        </div>
+<section id="portfolio-details" class="portfolio-details">
+  <div class="container">
+    <div id="auth-container">
+      <button id="loginButton">
+        <i class="bi bi-metamask icon"></i> <!-- Icon MetaMask dari Bootstrap Icons -->
+        Login with MetaMask
+      </button>
+    </div>
 
-<div id="portfolio-details" style="display:none;">
-  <!-- Your portfolio details content here -->
-  <p>This is your portfolio details</p>
-          <div class="row gy-4">
-            <div class="col-lg-8">
-              <div class="portfolio-details-slider swiper">
-                <div class="swiper-wrapper align-items-center">
-                  <div class="swiper-slide">
+    <div id="portfolio-details-content" style="display:none;">
+      <!-- Your portfolio details content here -->
+      <p>This is your portfolio details</p>
+      <div class="row gy-4">
+        <div class="col-lg-8">
+          <div class="portfolio-details-slider swiper">
+            <div class="swiper-wrapper align-items-center">
+              <div class="swiper-slide">
                     <a href="img/satria/st6.png" target="_blank"><img src="img/satria/st6.png" alt="putramas"></a>
                   </div>
                   <div class="swiper-slide">
@@ -407,9 +410,10 @@ function copyToClipboard(text) {
 </div>
 
 </b:if>
-        </div>
+         </div>
       </div>
-    </section>
+    </div>
+  </section>
   </main>
 
   <!-- ======= Footer ======= -->
@@ -467,7 +471,7 @@ function copyToClipboard(text) {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     if (isLoggedIn === 'true') {
       document.getElementById('auth-container').style.display = 'none';
-      document.getElementById('portfolio-details').style.display = 'block';
+      document.getElementById('portfolio-details-content').style.display = 'block';
     }
 
     document.getElementById('loginButton').onclick = async () => {
@@ -478,12 +482,12 @@ function copyToClipboard(text) {
           const chainId = await web3.eth.getChainId();
 
           // Ethereum Mainnet, BSC Mainnet, Polygon Mainnet
-          const allowedNetworks = ['0x1', '0x38', '0x89']; // 1 for Ethereum Mainnet, 56 for BSC Mainnet, 137 for Polygon Mainnet
+          const allowedNetworks = ['0x1', '0x56', '0x137']; // 1 for Ethereum Mainnet, 56 for BSC Mainnet, 137 for Polygon Mainnet
 
           if (allowedNetworks.includes(chainId.toString())) {
             // Hide authentication container and show portfolio details
             document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('portfolio-details').style.display = 'block';
+            document.getElementById('portfolio-details-content').style.display = 'block';
 
             // Save login status to localStorage
             localStorage.setItem('isLoggedIn', 'true');
@@ -501,7 +505,7 @@ function copyToClipboard(text) {
             if (allowedNetworks.includes(newChainId.toString())) {
               // Hide authentication container and show portfolio details
               document.getElementById('auth-container').style.display = 'none';
-              document.getElementById('portfolio-details').style.display = 'block';
+              document.getElementById('portfolio-details-content').style.display = 'block';
 
               // Save login status to localStorage
               localStorage.setItem('isLoggedIn', 'true');
