@@ -93,9 +93,14 @@
           <button id="loginButton">Login with MetaMask</button>
         </div>
 
-        <div id="portfolio-details" style="display: none;">
-  <!-- Your content here -->
-  <p>Content visible after successful login</p>
+        <div id="auth-container">
+  <!-- Your authentication content here -->
+</div>
+
+<div id="portfolio-details">
+  <!-- Your portfolio details content here -->
+  <p>This is your portfolio details</p>
+  <img src="https://via.placeholder.com/400" alt="Portfolio Image"> <!-- Contoh gambar -->
           <div class="row gy-4">
             <div class="col-lg-8">
               <div class="portfolio-details-slider swiper">
@@ -473,7 +478,7 @@ function copyToClipboard(text) {
         const allowedNetworks = ['1', '56', '137']; // 1 for Ethereum Mainnet, 56 for BSC Mainnet, 137 for Polygon Mainnet
         
         if (allowedNetworks.includes(chainId.toString())) {
-          // Show portfolio details
+          // Hide authentication container and show portfolio details
           document.getElementById('auth-container').style.display = 'none';
           document.getElementById('portfolio-details').style.display = 'block';
         } else {
@@ -488,7 +493,7 @@ function copyToClipboard(text) {
           // Check if the network switch was successful
           const newChainId = await web3.eth.getChainId();
           if (allowedNetworks.includes(newChainId.toString())) {
-            // Show portfolio details
+            // Hide authentication container and show portfolio details
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('portfolio-details').style.display = 'block';
           } else {
@@ -509,6 +514,18 @@ function copyToClipboard(text) {
     // Default to Ethereum Mainnet
     return { chainId: '1' };
   }
+
+  // Reload page after successful login
+  function reloadPage() {
+    location.reload();
+  }
+
+  // Call reloadPage() after successful login
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('loginButton').addEventListener('click', async () => {
+      await reloadPage();
+    });
+  });
 </script>
 </body>
 
