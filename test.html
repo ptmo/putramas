@@ -76,7 +76,7 @@
           <button id="loginButton">Login with MetaMask</button>
         </div>
 
-        <div id="content" style="display: none;">
+        <div id="portfolio-details" style="display: none;">
   <!-- Your content here -->
   <p>Content visible after successful login</p>
           <div class="row gy-4">
@@ -454,7 +454,7 @@ function copyToClipboard(text) {
         if (chainId === '0x1' || chainId === '0x38' || chainId === '0x89') { // Ethereum Mainnet, BSC Mainnet, Polygon Mainnet
           // Show content
           document.getElementById('auth-container').style.display = 'none';
-          document.getElementById('content').style.display = 'block';
+          document.getElementById('portfolio-details').style.display = 'block';
         } else {
           // Requesting network switch
           alert('Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet.');
