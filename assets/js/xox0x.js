@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
           rpcUrls: ['https://rpc.ftm.tools'],
           blockExplorerUrls: ['https://ftmscan.com/']
         },
-        43113: {
+        204: {
           chainId: '204',
           chainName: 'OpBNB Mainnet',
           nativeCurrency: {
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
           rpcUrls: ['https://arb1.arbitrum.io/rpc'],
           blockExplorerUrls: ['https://arbiscan.io/']
         },
-        64: {
+        5000: {
           chainId: '5000',
           chainName: 'Mantle',
           nativeCurrency: {
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
           rpcUrls: ['https://rpc.mantle.xyz/'],
           blockExplorerUrls: ['https://explorer.mantle.xyz/']
         },
-        421611: {
+        5001: {
           chainId: '5001',
           chainName: 'Mantle Testnet',
           nativeCurrency: {
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
           rpcUrls: ['https://rpc.testnet.mantle.xyz/'],
           blockExplorerUrls: ['https://explorer.testnet.mantle.xyz/']
         },
-        3125659152: {
+        324: {
           chainId: '324',
           chainName: 'zkSync Mainnet',
           nativeCurrency: {
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
           rpcUrls: ['https://api.zksync.io'],
           blockExplorerUrls: ['https://zkscan.io/']
         },
-        66: {
+        10: {
           chainId: '10',
           chainName: 'Optimistic Ethereum',
           nativeCurrency: {
