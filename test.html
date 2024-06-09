@@ -480,17 +480,27 @@ function copyToClipboard(text) {
         try {
           await window.ethereum.request({ method: 'eth_requestAccounts' });
           const chainId = await web3.eth.getChainId();
-
-          // Ethereum Mainnet, BSC Mainnet, Polygon Mainnet
           const allowedNetworks = ['1', '56', '137']; // 1 for Ethereum Mainnet, 56 for BSC Mainnet, 137 for Polygon Mainnet
-
+          
           if (allowedNetworks.includes(chainId.toString())) {
-            // Hide authentication container and show portfolio details
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('portfolio-details-content').style.display = 'block';
+            // Sign a message to verify the user
+            const accounts = await web3.eth.getAccounts();
+            const account = accounts[0];
+            const message = 'Please sign this message to log in.';
+            const signature = await web3.eth.personal.sign(message, account, '');
 
-            // Save login status to localStorage
-            localStorage.setItem('isLoggedIn', 'true');
+            // Verify signature (optional step, can be done on server side)
+            const signer = await web3.eth.personal.ecRecover(message, signature);
+            if (signer.toLowerCase() === account.toLowerCase()) {
+              // Hide authentication container and show portfolio details
+              document.getElementById('auth-container').style.display = 'none';
+              document.getElementById('portfolio-details-content').style.display = 'block';
+
+              // Save login status to localStorage
+              localStorage.setItem('isLoggedIn', 'true');
+            } else {
+              alert('Signature verification failed. Please try again.');
+            }
           } else {
             // Requesting network switch
             alert('Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet.');
@@ -503,12 +513,24 @@ function copyToClipboard(text) {
             // Check if the network switch was successful
             const newChainId = await web3.eth.getChainId();
             if (allowedNetworks.includes(newChainId.toString())) {
-              // Hide authentication container and show portfolio details
-              document.getElementById('auth-container').style.display = 'none';
-              document.getElementById('portfolio-details-content').style.display = 'block';
+              // Sign a message to verify the user
+              const accounts = await web3.eth.getAccounts();
+              const account = accounts[0];
+              const message = 'Please sign this message to log in.';
+              const signature = await web3.eth.personal.sign(message, account, '');
 
-              // Save login status to localStorage
-              localStorage.setItem('isLoggedIn', 'true');
+              // Verify signature (optional step, can be done on server side)
+              const signer = await web3.eth.personal.ecRecover(message, signature);
+              if (signer.toLowerCase() === account.toLowerCase()) {
+                // Hide authentication container and show portfolio details
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('portfolio-details-content').style.display = 'block';
+
+                // Save login status to localStorage
+                localStorage.setItem('isLoggedIn', 'true');
+              } else {
+                alert('Signature verification failed. Please try again.');
+              }
             } else {
               // Display error message
               alert('Network switch failed. Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet manually.');
@@ -522,11 +544,28 @@ function copyToClipboard(text) {
         alert('Please install MetaMask!');
       }
     };
+
+    // Check for MetaMask disconnection
+    if (typeof window.ethereum !== 'undefined') {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length === 0) {
+          // User is disconnected, clear login status
+          localStorage.removeItem('isLoggedIn');
+          document.getElementById('auth-container').style.display = 'block';
+          document.getElementById('portfolio-details-content').style.display = 'none';
+        }
+      });
+
+      window.ethereum.on('chainChanged', () => {
+        // Reload the page to handle network changes
+        window.location.reload();
+      });
+    }
   });
 
   function getNetworkSwitchParams() {
     // Default to Ethereum Mainnet
-    return { chainId: '0x1' };
+    return { chainId: '1' };
   }
 </script>
 </body>
