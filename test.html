@@ -450,8 +450,12 @@ function copyToClipboard(text) {
       const web3 = new Web3(window.ethereum);
       try {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const chainId = await web3.eth.getChainId();
-        if (chainId === '0x1' || chainId === '0x38' || chainId === '0x89') { // Ethereum Mainnet, BSC Mainnet, Polygon Mainnet
+        let chainId = await web3.eth.getChainId();
+        
+        // Ethereum Mainnet, BSC Mainnet, Polygon Mainnet
+        const allowedNetworks = ['0x1', '0x38', '0x89'];
+        
+        if (allowedNetworks.includes(chainId)) {
           // Show portfolio details
           document.getElementById('auth-container').style.display = 'none';
           document.getElementById('portfolio-details').style.display = 'block';
@@ -465,11 +469,13 @@ function copyToClipboard(text) {
           });
 
           // Check if the network switch was successful
-          const newChainId = await web3.eth.getChainId();
-          if (newChainId === '0x1' || newChainId === '0x38' || newChainId === '0x89') {
+          chainId = await web3.eth.getChainId();
+          if (allowedNetworks.includes(chainId)) {
+            // Show portfolio details
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('portfolio-details').style.display = 'block';
           } else {
+            // Display error message
             alert('Network switch failed. Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet manually.');
           }
         }
