@@ -482,7 +482,7 @@ function copyToClipboard(text) {
           const chainId = await web3.eth.getChainId();
 
           // Ethereum Mainnet, BSC Mainnet, Polygon Mainnet
-          const allowedNetworks = ['0x1', '0x56', '0x137']; // 1 for Ethereum Mainnet, 56 for BSC Mainnet, 137 for Polygon Mainnet
+          const allowedNetworks = ['1', '56', '137']; // 1 for Ethereum Mainnet, 56 for BSC Mainnet, 137 for Polygon Mainnet
 
           if (allowedNetworks.includes(chainId.toString())) {
             // Hide authentication container and show portfolio details
