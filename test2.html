@@ -29,6 +29,7 @@
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
   
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
@@ -149,24 +150,27 @@
       </div><br><hr></br>
     
       <div class="row gy-4">
-        
         <div class="col-lg-8">
           <div class="portfolio-details-slider swiper">
             <div class="swiper-wrapper align-items-center">
-              
               <div class="swiper-slide">
-                    <a href="img/satria/st6.png" target="_blank"><img src="img/satria/st6.png" alt="putramas"></a>
-                  </div>
-                  <div class="swiper-slide">
-                    <a href="img/satria/st6.png" target="_blank"><img src="img/satria/st6.png" alt="putramas"></a>
-                  </div>
-                  <div class="swiper-slide">
-                    <a href="img/satria/st6.png" target="_blank"><img src="img/satria/st6.png" alt="putramas"></a>
-                  </div>
-                </div>
-                <div class="swiper-pagination"></div>
+                <a href="img/satria/st6.png" target="_blank"><img src="img/satria/st6.png" alt="putramas"></a>
+              </div>
+              <div class="swiper-slide">
+                <a href="img/satria/st6.png" target="_blank"><img src="img/satria/st6.png" alt="putramas"></a>
+              </div>
+              <div class="swiper-slide">
+                <a href="img/satria/st6.png" target="_blank"><img src="img/satria/st6.png" alt="putramas"></a>
               </div>
             </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
             <div class="col-lg-4">
               <div class="portfolio-info">
@@ -514,12 +518,24 @@ function copyToClipboard(text) {
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
   <script src="assets/js/ori.js"></script>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var swiper = new Swiper('.swiper', {
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+  });
+</script>
 
   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="2a43af827254bee03e671cce-|49" defer></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/vef91dfe02fce4ee0ad053f6de4f175db1715022073587" integrity="sha512-sDIX0kl85v1Cl5tu4WGLZCpH/dV9OHbA4YlKCuCiMmOQIk4buzoYDZSFj+TvC71mOBLh8CDC/REgE0GX0xcbjA==" data-cf-beacon='{"rayId":"890ea2c6cad85ff3","r":1,"version":"2024.4.1","token":"b3b7be270a314d819ca7b313ae293dce"}' crossorigin="anonymous"></script>
-
-  <script>
-    
-  </script>
   
 </body>
 
