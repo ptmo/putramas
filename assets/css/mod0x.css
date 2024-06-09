@@ -3,8 +3,9 @@
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  width: 500px; /* Lebar kotak informasi akun */
-  margin: left; /* untuk posisi kiri */
+  width: 100%; /* Lebar kotak informasi akun */
+  max-width: 500px; /* Lebar maksimum */
+  margin: 0 left; /* untuk posisi kiri */
 }
 
 #wallet-info p {
@@ -12,6 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap; /* Bungkus jika terlalu panjang */
 }
 
 #wallet-info strong {
@@ -40,4 +42,40 @@
   color: #333;
   font-weight: bold;
   text-align: left; /* Rata kiri */
+  flex: 1; /* Ambil sisa ruang jika perlu */
+}
+
+@media (max-width: 768px) {
+  #wallet-info {
+    padding: 8px;
+  }
+
+  #wallet-info p {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #wallet-info strong, #wallet-info span {
+    text-align: left;
+    width: 100%;
+  }
+
+  #wallet-info button {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  #wallet-info {
+    padding: 6px;
+  }
+
+  #wallet-info strong, #wallet-info span {
+    font-size: 14px;
+  }
+
+  #wallet-info button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 }
