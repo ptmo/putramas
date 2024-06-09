@@ -38,6 +38,67 @@
       background-color: #e0790b; /* Warna oranye sedikit lebih gelap saat hover */
     }
   </style>
+
+  <style>
+    #auth-container, #portfolio-details-content {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    #loginButton {
+      background-color: #f6851b;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    #loginButton:hover {
+      background-color: #e6761b;
+    }
+
+    #wallet-info {
+      margin-top: 20px;
+      background-color: #333;
+      color: white;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: left;
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #wallet-info p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    #logoutButton {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+
+    #logoutButton:hover {
+      background-color: #e64545;
+    }
+  </style>
   
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
@@ -98,7 +159,12 @@
 
     <div id="portfolio-details-content" style="display:none;">
       <!-- Your portfolio details content here -->
-      <p>Detail koleksi telah terbuka</p>
+      <p>Detail Koleksi Telah Dibuka</p>
+      <div id="wallet-info">
+        <p><strong>Account:</strong> <span id="account-address"></span></p>
+        <p><strong>Balance:</strong> <span id="account-balance"></span></p>
+        <button id="logoutButton">Disconnect</button>
+      </div>
       <div class="row gy-4">
         <div class="col-lg-8">
           <div class="portfolio-details-slider swiper">
@@ -466,108 +532,127 @@ function copyToClipboard(text) {
   <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="2a43af827254bee03e671cce-|49" defer></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/vef91dfe02fce4ee0ad053f6de4f175db1715022073587" integrity="sha512-sDIX0kl85v1Cl5tu4WGLZCpH/dV9OHbA4YlKCuCiMmOQIk4buzoYDZSFj+TvC71mOBLh8CDC/REgE0GX0xcbjA==" data-cf-beacon='{"rayId":"890ea2c6cad85ff3","r":1,"version":"2024.4.1","token":"b3b7be270a314d819ca7b313ae293dce"}' crossorigin="anonymous"></script>
 
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Check login status on page load
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (isLoggedIn === 'true') {
-      document.getElementById('auth-container').style.display = 'none';
-      document.getElementById('portfolio-details-content').style.display = 'block';
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      if (isLoggedIn === 'true') {
+        document.getElementById('auth-container').style.display = 'none';
+        document.getElementById('portfolio-details-content').style.display = 'block';
+        updateWalletInfo();
+      }
 
-    document.getElementById('loginButton').onclick = async () => {
-      if (typeof window.ethereum !== 'undefined') {
-        const web3 = new Web3(window.ethereum);
-        try {
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-          const chainId = await web3.eth.getChainId();
-          const allowedNetworks = ['1', '56', '137']; // 1 for Ethereum Mainnet, 56 for BSC Mainnet, 137 for Polygon Mainnet
-          
-          if (allowedNetworks.includes(chainId.toString())) {
-            // Sign a message to verify the user
-            const accounts = await web3.eth.getAccounts();
-            const account = accounts[0];
-            const message = 'Please sign this message to log in.';
-            const signature = await web3.eth.personal.sign(message, account, '');
+      document.getElementById('loginButton').onclick = async () => {
+        if (typeof window.ethereum !== 'undefined') {
+          const web3 = new Web3(window.ethereum);
+          try {
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const chainId = await web3.eth.getChainId();
+            const allowedNetworks = ['1', '56', '137'];
 
-            // Verify signature (optional step, can be done on server side)
-            const signer = await web3.eth.personal.ecRecover(message, signature);
-            if (signer.toLowerCase() === account.toLowerCase()) {
-              // Hide authentication container and show portfolio details
-              document.getElementById('auth-container').style.display = 'none';
-              document.getElementById('portfolio-details-content').style.display = 'block';
-
-              // Save login status to localStorage
-              localStorage.setItem('isLoggedIn', 'true');
-            } else {
-              alert('Signature verification failed. Please try again.');
-            }
-          } else {
-            // Requesting network switch
-            alert('Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet.');
-            const network = getNetworkSwitchParams();
-            await ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: network.chainId }]
-            });
-
-            // Check if the network switch was successful
-            const newChainId = await web3.eth.getChainId();
-            if (allowedNetworks.includes(newChainId.toString())) {
-              // Sign a message to verify the user
+            if (allowedNetworks.includes(chainId.toString())) {
               const accounts = await web3.eth.getAccounts();
               const account = accounts[0];
               const message = 'Please sign this message to log in.';
               const signature = await web3.eth.personal.sign(message, account, '');
 
-              // Verify signature (optional step, can be done on server side)
               const signer = await web3.eth.personal.ecRecover(message, signature);
               if (signer.toLowerCase() === account.toLowerCase()) {
-                // Hide authentication container and show portfolio details
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('portfolio-details-content').style.display = 'block';
 
-                // Save login status to localStorage
                 localStorage.setItem('isLoggedIn', 'true');
+                updateWalletInfo();
               } else {
                 alert('Signature verification failed. Please try again.');
               }
             } else {
-              // Display error message
-              alert('Network switch failed. Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet manually.');
+              alert('Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet.');
+              const network = getNetworkSwitchParams();
+              await ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: network.chainId }]
+              });
+
+              const newChainId = await web3.eth.getChainId();
+              if (allowedNetworks.includes(newChainId.toString())) {
+                const accounts = await web3.eth.getAccounts();
+                const account = accounts[0];
+                const message = 'Please sign this message to log in.';
+                const signature = await web3.eth.personal.sign(message, account, '');
+
+                const signer = await web3.eth.personal.ecRecover(message, signature);
+                if (signer.toLowerCase() === account.toLowerCase()) {
+                  document.getElementById('auth-container').style.display = 'none';
+                  document.getElementById('portfolio-details-content').style.display = 'block';
+
+                  localStorage.setItem('isLoggedIn', 'true');
+                  updateWalletInfo();
+                } else {
+                  alert('Signature verification failed. Please try again.');
+                }
+              } else {
+                alert('Network switch failed. Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet manually.');
+              }
             }
+          } catch (error) {
+            console.error(error);
+            alert('An error occurred while connecting to MetaMask.');
           }
-        } catch (error) {
-          console.error(error);
-          alert('An error occurred while connecting to MetaMask.');
+        } else {
+          alert('Please install MetaMask!');
         }
-      } else {
-        alert('Please install MetaMask!');
+      };
+
+      document.getElementById('logoutButton').onclick = () => {
+        localStorage.removeItem('isLoggedIn');
+        document.getElementById('auth-container').style.display = 'block';
+        document.getElementById('portfolio-details-content').style.display = 'none';
+      };
+
+      async function updateWalletInfo() {
+        const web3 = new Web3(window.ethereum);
+        const accounts = await web3.eth.getAccounts();
+        const account = accounts[0];
+        const balance = await web3.eth.getBalance(account);
+
+        document.getElementById('account-address').innerText = account;
+        document.getElementById('account-balance').innerText = web3.utils.fromWei(balance, 'ether') + ' ETH';
       }
-    };
 
-    // Check for MetaMask disconnection
-    if (typeof window.ethereum !== 'undefined') {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length === 0) {
-          // User is disconnected, clear login status
-          localStorage.removeItem('isLoggedIn');
-          document.getElementById('auth-container').style.display = 'block';
-          document.getElementById('portfolio-details-content').style.display = 'none';
-        }
-      });
+      if (typeof window.ethereum !== 'undefined') {
+        window.ethereum.on('accountsChanged', (accounts) => {
+          if (accounts.length === 0) {
+            localStorage.removeItem('isLoggedIn');
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('portfolio-details-content').style.display = 'none';
+          } else {
+            updateWalletInfo();
+          }
+        });
 
-      window.ethereum.on('chainChanged', () => {
-        // Reload the page to handle network changes
-        window.location.reload();
-      });
-    }
-  });
+        window.ethereum.on('chainChanged', (chainId) => {
+          if (!['1', '56', '137'].includes(chainId)) {
+            localStorage.removeItem('isLoggedIn');
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('portfolio-details-content').style.display = 'none';
+          }
+        });
+      }
 
-  function getNetworkSwitchParams() {
-    // Default to Ethereum Mainnet
-    return { chainId: '1' };
-  }
-</script>
+      function getNetworkSwitchParams() {
+        return {
+          chainId: '1',
+          chainName: 'Ethereum Mainnet',
+          nativeCurrency: {
+            name: 'Ether',
+            symbol: 'ETH',
+            decimals: 18
+          },
+          rpcUrls: ['https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'],
+          blockExplorerUrls: ['https://etherscan.io']
+        };
+      }
+    });
+  </script>
 </body>
 
 </html>
