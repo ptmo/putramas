@@ -72,7 +72,7 @@
     <!-- ======= Portfolio Details Section ======= -->
     <section id="portfolio-details" class="portfolio-details">
       <div class="container">
-        <div id="portfolio-details">
+        <div id="auth-container">
           <button id="loginButton">Login with MetaMask</button>
         </div>
 
@@ -452,7 +452,7 @@ function copyToClipboard(text) {
         await window.ethereum.request({ method: 'eth_requestAccounts' });
         const chainId = await web3.eth.getChainId();
         if (chainId === '0x1' || chainId === '0x38' || chainId === '0x89') { // Ethereum Mainnet, BSC Mainnet, Polygon Mainnet
-          // Show content
+          // Show portfolio details
           document.getElementById('auth-container').style.display = 'none';
           document.getElementById('portfolio-details').style.display = 'block';
         } else {
@@ -463,6 +463,15 @@ function copyToClipboard(text) {
             method: 'wallet_switchEthereumChain',
             params: [{ chainId: network.chainId }]
           });
+
+          // Check if the network switch was successful
+          const newChainId = await web3.eth.getChainId();
+          if (newChainId === '0x1' || newChainId === '0x38' || newChainId === '0x89') {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('portfolio-details').style.display = 'block';
+          } else {
+            alert('Network switch failed. Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet manually.');
+          }
         }
       } catch (error) {
         console.error(error);
@@ -478,7 +487,6 @@ function copyToClipboard(text) {
     return { chainId: '0x1' };
   }
 </script>
-
 </body>
 
 </html>
