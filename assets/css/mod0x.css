@@ -3,8 +3,11 @@
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  width: 250px; /* Lebar kotak informasi akun */
-  margin: left; /* untuk posisi kiri */
+  width: 100%; /* Lebar kotak informasi akun */
+  max-width: 300px; /* Maksimum lebar untuk tetap responsif */
+  margin: 0 auto; /* Pusatkan kotak informasi akun */
+  text-align: left; /* Rata kiri konten */
+  box-sizing: border-box;
 }
 
 #wallet-info p {
@@ -39,5 +42,22 @@
 #wallet-info span {
   color: #333;
   font-weight: bold;
-  text-align: left; /* Rata kiri */
+}
+
+/* Media queries untuk responsivitas */
+@media (max-width: 768px) {
+  #wallet-info {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  #wallet-info {
+    padding: 8px;
+  }
+  
+  #wallet-info button {
+    font-size: 13px;
+  }
 }
