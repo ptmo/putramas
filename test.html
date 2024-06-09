@@ -630,7 +630,7 @@ function copyToClipboard(text) {
         });
 
         window.ethereum.on('chainChanged', (chainId) => {
-          if (!['0x1', '0x38', '0x89'].includes(chainId)) {
+          if (!['1', '56', '137'].includes(chainId)) {
             localStorage.removeItem('isLoggedIn');
             document.getElementById('auth-container').style.display = 'block';
             document.getElementById('portfolio-details-content').style.display = 'none';
@@ -640,7 +640,7 @@ function copyToClipboard(text) {
 
       function getNetworkSwitchParams() {
         return {
-          chainId: '0x1',
+          chainId: '1',
           chainName: 'Ethereum Mainnet',
           nativeCurrency: {
             name: 'Ether',
