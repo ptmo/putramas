@@ -564,41 +564,18 @@ function copyToClipboard(text) {
               updateWalletInfo();
               metamaskButton.textContent = 'Your Account'; // Change button text after login
             } else {
-              alert('Signature verification failed. Please try again.');
+              throw new Error('Signature verification failed. Please try again.');
             }
           } else {
-            alert('Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet.');
-            const network = getNetworkSwitchParams();
-            await ethereum.request({
-              method: 'wallet_switchEthereumChain',
-              params: [{ chainId: network.chainId }]
-            });
-
-            const newChainId = await web3.eth.getChainId();
-            if (allowedNetworks.includes(newChainId.toString())) {
-              const accounts = await web3.eth.getAccounts();
-              const account = accounts[0];
-              const message = 'Please sign this message to log in.';
-              const signature = await web3.eth.personal.sign(message, account, '');
-
-              const signer = await web3.eth.personal.ecRecover(message, signature);
-              if (signer.toLowerCase() === account.toLowerCase()) {
-                authContainer.style.display = 'none';
-                portfolioDetails.style.display = 'block';
-
-                localStorage.setItem('isLoggedIn', 'true');
-                updateWalletInfo();
-                metamaskButton.textContent = 'Your Account'; // Change button text after login
-              } else {
-                alert('Signature verification failed. Please try again.');
-              }
-            } else {
-              alert('Network switch failed. Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet manually.');
-            }
+            throw new Error('Please switch to Ethereum Mainnet, BSC Mainnet, or Polygon Mainnet.');
           }
         } catch (error) {
           console.error(error);
-          alert('An error occurred while connecting to MetaMask.');
+          if (error.code === 4001) {
+            alert('You rejected the request to connect to MetaMask.');
+          } else {
+            alert('An error occurred while connecting to MetaMask. Please try again.');
+          }
         }
       } else {
         alert('Please install MetaMask!');
@@ -670,6 +647,7 @@ function copyToClipboard(text) {
     }
   });
 </script>
+
 
 </body>
 
