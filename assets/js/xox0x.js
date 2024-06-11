@@ -1,108 +1,130 @@
 document.addEventListener('DOMContentLoaded', () => {
-      const isLoggedIn = localStorage.getItem('isLoggedIn');
-      if (isLoggedIn === 'true') {
-        document.getElementById('auth-container').style.display = 'none';
-        document.getElementById('portfolio-details-content').style.display = 'block';
-        updateWalletInfo();
-      }
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  if (isLoggedIn === 'true') {
+    document.getElementById('auth-container').style.display = 'none';
+    document.getElementById('portfolio-details-content').style.display = 'block';
+    updateWalletInfo();
+  }
 
-      document.getElementById('loginButton').onclick = async () => {
-        if (typeof window.ethereum !== 'undefined') {
-          const web3 = new Web3(window.ethereum);
-          try {
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const chainId = await web3.eth.getChainId();
-            const allowedNetworks = ['1', '56', '137', '43114', '250', '204', '42161', '5000', '5001', '324', '10', '97'];
+  document.getElementById('loginButton').onclick = async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      const web3 = new Web3(window.ethereum);
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const chainId = await web3.eth.getChainId();
+        const allowedNetworks = ['1', '56', '137', '43114', '250', '204', '42161', '5000', '5001', '324', '10', '97'];
 
-            if (allowedNetworks.includes(chainId.toString())) {
-              const accounts = await web3.eth.getAccounts();
-              const account = accounts[0];
-              const message = 'Please sign this message to log in Putramas Official.';
-              const signature = await web3.eth.personal.sign(message, account, '');
+        if (allowedNetworks.includes(chainId.toString())) {
+          const accounts = await web3.eth.getAccounts();
+          const account = accounts[0];
+          const message = 'Please sign this message to log in Putramas Official.';
+          const signature = await web3.eth.personal.sign(message, account, '');
 
-              const signer = await web3.eth.personal.ecRecover(message, signature);
-              if (signer.toLowerCase() === account.toLowerCase()) {
-                document.getElementById('auth-container').style.display = 'none';
-                document.getElementById('portfolio-details-content').style.display = 'block';
+          const signer = await web3.eth.personal.ecRecover(message, signature);
+          if (signer.toLowerCase() === account.toLowerCase()) {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('portfolio-details-content').style.display = 'block';
 
-                localStorage.setItem('isLoggedIn', 'true');
-                updateWalletInfo();
-              } else {
-                alert('Signature verification failed. Please try again.');
-              }
-            } else {
-              alert('Please switch to an allowed network.');
-              const network = getNetworkSwitchParams(chainId);
-              await ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: Web3.utils.toHex(network.chainId) }]
-              });
-
-              const newChainId = await web3.eth.getChainId();
-              if (allowedNetworks.includes(newChainId.toString())) {
-                const accounts = await web3.eth.getAccounts();
-                const account = accounts[0];
-                const message = 'Please sign this message to log in.';
-                const signature = await web3.eth.personal.sign(message, account, '');
-
-                const signer = await web3.eth.personal.ecRecover(message, signature);
-                if (signer.toLowerCase() === account.toLowerCase()) {
-                  document.getElementById('auth-container').style.display = 'none';
-                  document.getElementById('portfolio-details-content').style.display = 'block';
-
-                  localStorage.setItem('isLoggedIn', 'true');
-                  updateWalletInfo();
-                } else {
-                  alert('Signature verification failed. Please try again.');
-                }
-              } else {
-                alert('Network switch failed. Please switch to an allowed network manually.');
-              }
-            }
-          } catch (error) {
-            console.error(error);
-            alert('An error occurred while connecting to MetaMask.');
+            localStorage.setItem('isLoggedIn', 'true');
+            updateWalletInfo();
+          } else {
+            alert('Signature verification failed. Please try again.');
           }
         } else {
-          alert('Please install MetaMask!');
-        }
-      };
+          alert('Please switch to an allowed network.');
+          const network = getNetworkSwitchParams(chainId);
+          await ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: Web3.utils.toHex(network.chainId) }]
+          });
 
-      document.getElementById('logoutButton').onclick = () => {
+          const newChainId = await web3.eth.getChainId();
+          if (allowedNetworks.includes(newChainId.toString())) {
+            const accounts = await web3.eth.getAccounts();
+            const account = accounts[0];
+            const message = 'Please sign this message to log in.';
+            const signature = await web3.eth.personal.sign(message, account, '');
+
+            const signer = await web3.eth.personal.ecRecover(message, signature);
+            if (signer.toLowerCase() === account.toLowerCase()) {
+              document.getElementById('auth-container').style.display = 'none';
+              document.getElementById('portfolio-details-content').style.display = 'block';
+
+              localStorage.setItem('isLoggedIn', 'true');
+              updateWalletInfo();
+            } else {
+              alert('Signature verification failed. Please try again.');
+            }
+          } else {
+            alert('Network switch failed. Please switch to an allowed network manually.');
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred while connecting to MetaMask.');
+      }
+    } else {
+      alert('Please install MetaMask!');
+    }
+  };
+
+  document.getElementById('logoutButton').onclick = () => {
+    localStorage.removeItem('isLoggedIn');
+    document.getElementById('auth-container').style.display = 'block';
+    document.getElementById('portfolio-details-content').style.display = 'none';
+  };
+
+  async function updateWalletInfo() {
+    const web3 = new Web3(window.ethereum);
+    const accounts = await web3.eth.getAccounts();
+    const account = accounts[0];
+    const chainId = await web3.eth.getChainId();
+    const nativeCurrency = getNativeCurrency(chainId);
+    const balance = await web3.eth.getBalance(account);
+
+    document.getElementById('account-address').innerText = account;
+    document.getElementById('account-balance').innerText = web3.utils.fromWei(balance, 'ether') + ' ' + nativeCurrency;
+  }
+
+  if (typeof window.ethereum !== 'undefined') {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length === 0) {
         localStorage.removeItem('isLoggedIn');
         document.getElementById('auth-container').style.display = 'block';
         document.getElementById('portfolio-details-content').style.display = 'none';
-      };
-
-      async function updateWalletInfo() {
-        const web3 = new Web3(window.ethereum);
-        const accounts = await web3.eth.getAccounts();
-        const account = accounts[0];
-        const balance = await web3.eth.getBalance(account);
-
-        document.getElementById('account-address').innerText = account;
-        document.getElementById('account-balance').innerText = web3.utils.fromWei(balance, 'ether') + ' ETH';
+      } else {
+        updateWalletInfo();
       }
+    });
 
-      if (typeof window.ethereum !== 'undefined') {
-        window.ethereum.on('accountsChanged', (accounts) => {
-          if (accounts.length === 0) {
-            localStorage.removeItem('isLoggedIn');
-            document.getElementById('auth-container').style.display = 'block';
-            document.getElementById('portfolio-details-content').style.display = 'none';
-          } else {
-            updateWalletInfo();
-          }
-        });
-
-        window.ethereum.on('chainChanged', (chainId) => {
-          if (!['1', '56', '137', '43114', '250', '204', '42161', '5000', '5001', '324', '10', '97'].includes(chainId.toString())) {
-            localStorage.removeItem('isLoggedIn');
-            document.getElementById('auth-container').style.display = 'block';
-            document.getElementById('portfolio-details-content').style.display = 'none';
-          }
-        });
+    window.ethereum.on('chainChanged', (chainId) => {
+      if (!['1', '56', '137', '43114', '250', '204', '42161', '5000', '5001', '324', '10', '97'].includes(chainId.toString())) {
+        localStorage.removeItem('isLoggedIn');
+        document.getElementById('auth-container').style.display = 'block';
+        document.getElementById('portfolio-details-content').style.display = 'none';
+      } else {
+        updateWalletInfo();
       }
+    });
+  }
+
+  function getNativeCurrency(chainId) {
+    const nativeCurrencies = {
+      '1': 'ETH',
+      '56': 'BNB',
+      '137': 'MATIC',
+      '43114': 'AVAX',
+      '250': 'FTM',
+      '204': 'BNB',
+      '42161': 'ETH',
+      '5000': 'MNT',
+      '5001': 'MNT',
+      '324': 'ETH',
+      '10': 'ETH',
+      '97': 'tBNB'
+    };
+    return nativeCurrencies[chainId.toString()] || 'ETH';
+  }
 
       function getNetworkSwitchParams(chainId) {
         const networks = {
