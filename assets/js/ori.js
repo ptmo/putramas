@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (allowedNetworks.includes(chainId.toString())) {
           const accounts = await web3.eth.getAccounts();
           const account = accounts[0];
-          const message = 'Please sign this message to log in Putramas Official.';
+          const message = 'https://wwww.putramas.my.id sign this message to log in Putramas Official.';
           const signature = await web3.eth.personal.sign(message, account, '');
 
           const signer = await web3.eth.personal.ecRecover(message, signature);
