@@ -67,15 +67,13 @@ p {
         <h1>Airdrop Claim</h1>
         <button id="connectButton">Connect Wallet</button>
         <p id="account">Not connected</p>
-        <p id="eligibleAmount">Checking eligibility...</p>
+        <p id="eligibleAmount"></p>
         <button id="claimButton" disabled>Claim Airdrop</button>
         <p id="status"></p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.3/dist/ethers.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.3/dist/index.js"></script>
     <script>
       const contractAddress = 'YOUR_CONTRACT_ADDRESS';
 const contractABI = [
@@ -130,43 +128,35 @@ let provider;
 let selectedAccount;
 
 async function connectWallet() {
-    const providerOptions = {
-        walletconnect: {
-            package: WalletConnectProvider,
-            options: {
-                infuraId: "13a829b150b04ee09a1d09b5085a2722"
-            }
-        }
-    };
+    if (window.ethereum) {
+        provider = window.ethereum;
 
-    const web3Modal = new Web3Modal({
-        cacheProvider: false,
-        providerOptions
-    });
-
-    try {
-        provider = await web3Modal.connect();
-        provider.on("chainChanged", checkNetwork);
-        provider.on("accountsChanged", (accounts) => {
+        try {
+            await provider.request({ method: 'eth_requestAccounts' });
+            provider.on("chainChanged", checkNetwork);
+            provider.on("accountsChanged", (accounts) => {
+                selectedAccount = accounts[0];
+                document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
+                checkEligibility();
+            });
+            await checkNetwork();
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const accounts = await ethersProvider.listAccounts();
             selectedAccount = accounts[0];
             document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
             checkEligibility();
-        });
-        await checkNetwork();
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const accounts = await ethersProvider.listAccounts();
-        selectedAccount = accounts[0];
-        document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
-        checkEligibility();
-    } catch (error) {
-        console.error("Could not connect to wallet", error);
-        document.getElementById('status').textContent = `Error: ${error.message}`;
+        } catch (error) {
+            console.error("Could not connect to wallet", error);
+            document.getElementById('status').textContent = `Error: ${error.message}`;
+        }
+    } else {
+        document.getElementById('status').textContent = 'MetaMask not found. Please install MetaMask and try again.';
     }
 }
 
 async function checkNetwork() {
     const chainId = await provider.request({ method: 'eth_chainId' });
-    if (chainId !== '56') { // BSC Mainnet chain ID in hex is 0x38
+    if (chainId !== '56') { // BSC Mainnet chain ID is 56 (0x38 in hexadecimal)
         try {
             await provider.request({
                 method: 'wallet_switchEthereumChain',
@@ -194,11 +184,7 @@ async function checkNetwork() {
                     });
                 } catch (addError) {
                     console.error(addError);
-                    document.getElementById('status').textContent = `Error: ${addError.message}`;
                 }
-            } else {
-                console.error(switchError);
-                document.getElementById('status').textContent = `Error: ${switchError.message}`;
             }
         }
     }
@@ -244,6 +230,7 @@ async function claimAirdrop() {
 
 document.getElementById('connectButton').addEventListener('click', connectWallet);
 document.getElementById('claimButton').addEventListener('click', claimAirdrop);
+
     </script>
 </body>
 </html>
