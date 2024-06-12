@@ -3,279 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Airdrop Claim</title>
-    <style>
-      body {
+    <title>Presale Token Kripto</title>
+    <style>body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #2c2c2c 10%, #3c3c3c 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    background-color: #f0f0f0;
     margin: 0;
-    overflow: hidden;
+    padding: 0;
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 2rem;
-    text-align: center;
-    max-width: 400px;
-    margin: auto;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    color: #fff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
 }
 
-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #7f00ff 0%, #e100ff 100%);
-    color: white;
+#walletInfo, #purchase, #transactionHistory {
+    margin-bottom: 20px;
+}
+
+#purchase input[type="number"] {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+}
+
+#purchase button {
+    padding: 8px 20px;
+    font-size: 16px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
 }
 
-button:hover {
-    background: linear-gradient(135deg, #6a00ff 0%, #c700ff 100%);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+#transactionList {
+    white-space: pre-line;
 }
 
-p {
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-#status {
-    margin-top: 1rem;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-}
-    </style>
+</style>
 </head>
 <body>
     <div class="container">
-        <h1>Airdrop Claim</h1>
-        <button id="connectButton">Connect Wallet</button>
-        <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
-        <p id="account">Not connected</p>
-        <p id="eligibleAmount"></p>
-        <p id="tokenBalance"></p>
-        <button id="claimButton" disabled>Claim Airdrop</button>
-        <p id="status"></p>
+        <h1>Presale Token Kripto</h1>
+        <div id="walletInfo">
+            <h3>Wallet Info</h3>
+            <p><strong>Address:</strong> <span id="walletAddress">Connecting...</span></p>
+            <p><strong>Balance:</strong> <span id="walletBalance">Loading...</span> BNB</p>
+            <p><strong>Estimated Assets:</strong> <span id="estimatedAssets">Loading...</span> Tokens</p>
+        </div>
+        <div id="purchase">
+            <h3>Purchase Tokens</h3>
+            <p>
+                <label for="bnbAmount">BNB Amount:</label>
+                <input type="number" id="bnbAmount" step="0.01" placeholder="Enter BNB amount">
+                <button onclick="buyWithBNB()">Buy with BNB</button>
+            </p>
+            <p>
+                <label for="usdtAmount">USDT Amount:</label>
+                <input type="number" id="usdtAmount" step="0.01" placeholder="Enter USDT amount">
+                <button onclick="buyWithUSDT()">Buy with USDT</button>
+            </p>
+        </div>
+        <div id="transactionHistory">
+            <h3>Transaction History</h3>
+            <p id="transactionList">Loading...</p>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.3/dist/ethers.umd.min.js"></script>
-    <script>
-      const contractAddress = 'YOUR_CONTRACT_ADDRESS';
-const contractABI = [
-    {
-        "inputs": [],
-        "name": "claimAirdrop",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "_address",
-                "type": "address"
-            }
-        ],
-        "name": "getAirdropAmount",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "recipient",
-                "type": "address"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "AirdropClaimed",
-        "type": "event"
-    }
-];
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js" integrity="sha512-B0fPbFn+w6/PSM1peTtsNJXsSUD+49U+3Qz4hoK57rGd1N3W2S0S5Y0b18tP7zP9lJ8XHfHxwlyHukg4GJsjYQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>// Script for connecting wallet and interacting with smart contract
 
-let provider;
-let selectedAccount;
-let ethersProvider;
-let contract;
+let web3;
+let presale;
+let token;
 
-async function connectWallet() {
+// Web3 initialization
+async function initWeb3() {
     if (window.ethereum) {
-        provider = window.ethereum;
-
+        window.web3 = new Web3(window.ethereum);
         try {
-            await provider.request({ method: 'eth_requestAccounts' });
-            provider.on("chainChanged", handleChainChanged);
-            provider.on("accountsChanged", handleAccountsChanged);
-            await checkNetwork();
-            ethersProvider = new ethers.providers.Web3Provider(provider);
-            const accounts = await ethersProvider.listAccounts();
-            selectedAccount = accounts[0];
-            document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
-            document.getElementById('connectButton').style.display = 'none';
-            document.getElementById('disconnectButton').style.display = 'block';
-            checkEligibility();
-            getTokenBalance();
+            await window.ethereum.enable();
+            console.log('Web3 initialized successfully');
+            await initContracts();
         } catch (error) {
-            console.error("Could not connect to wallet", error);
-            document.getElementById('status').textContent = `Error: ${error.message}`;
+            console.error('User denied account access');
         }
+    } else if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider);
+        console.log('Web3 initialized successfully');
+        await initContracts();
     } else {
-        document.getElementById('status').textContent = 'MetaMask not found. Please install MetaMask and try again.';
+        console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
 }
 
-function handleChainChanged() {
-    window.location.reload();
-}
+// Initialize presale and token contracts
+async function initContracts() {
+    const networkId = await web3.eth.net.getId();
+    const presaleAddress = 'YOUR_PRESALE_CONTRACT_ADDRESS';
+    const tokenAddress = 'YOUR_TOKEN_CONTRACT_ADDRESS';
 
-function handleAccountsChanged(accounts) {
-    if (accounts.length === 0) {
-        disconnectWallet();
-    } else {
-        selectedAccount = accounts[0];
-        document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
-        checkEligibility();
-        getTokenBalance();
+    try {
+        presale = new web3.eth.Contract(PresaleABI, presaleAddress);
+        token = new web3.eth.Contract(TokenABI, tokenAddress);
+        console.log('Contracts initialized successfully');
+        connectWallet();
+    } catch (error) {
+        console.error('Failed to initialize contracts', error);
     }
 }
 
-async function checkNetwork() {
-    const chainId = await provider.request({ method: 'eth_chainId' });
+// Connect wallet function
+async function connectWallet() {
+    try {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        document.getElementById('walletAddress').textContent = accounts[0];
+        updateWalletInfo();
+    } catch (error) {
+        console.error(error);
+    }
+}
 
-    // BSC Mainnet chain ID is '0x38' (56 in decimal)
-    if (chainId !== '0x38' && chainId !== '56') {
-        try {
-            await provider.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x38' }]
-            });
-        } catch (switchError) {
-            if (switchError.code === 4902) {
-                try {
-                    await provider.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [
-                            {
-                                chainId: '0x38',
-                                chainName: 'Binance Smart Chain Mainnet',
-                                nativeCurrency: {
-                                    name: 'BNB',
-                                    symbol: 'BNB',
-                                    decimals: 18
-                                },
-                                rpcUrls: ['https://bsc-dataseed.binance.org/'],
-                                blockExplorerUrls: ['https://bscscan.com/']
-                            }
-                        ]
-                    });
-                } catch (addError) {
-                    console.error(addError);
-                }
-            }
+// Update wallet info function
+async function updateWalletInfo() {
+    try {
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        const address = accounts[0];
+        const balance = await web3.eth.getBalance(address);
+        const tokenBalance = await token.methods.balanceOf(address).call();
+        document.getElementById('walletAddress').textContent = address;
+        document.getElementById('walletBalance').textContent = web3.utils.fromWei(balance, 'ether');
+        document.getElementById('estimatedAssets').textContent = tokenBalance;
+        getTransactionHistory(address);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// Buy tokens with BNB function
+async function buyWithBNB() {
+    try {
+        const bnbAmount = document.getElementById('bnbAmount').value;
+        await presale.methods.buyWithBNB().send({ value: web3.utils.toWei(bnbAmount, 'ether') });
+        updateWalletInfo();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// Buy tokens with USDT function
+async function buyWithUSDT() {
+    try {
+        const usdtAmount = document.getElementById('usdtAmount').value;
+        // Assume you have implemented a function to transfer USDT tokens
+        await transferUSDT(usdtAmount);
+        updateWalletInfo();
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// Get transaction history function
+async function getTransactionHistory(address) {
+    try {
+        const transactions = await fetchTransactionHistory(address);
+        document.getElementById('transactionList').textContent = transactions;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// Fetch transaction history from backend API
+async function fetchTransactionHistory(address) {
+    try {
+        const response = await fetch(`https://api.yourbackend.com/transactions?address=${address}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch transaction history');
         }
-    }
-}
-
-async function checkEligibility() {
-    if (!provider) return;
-    contract = new ethers.Contract(contractAddress, contractABI, ethersProvider);
-
-    try {
-        const amount = await contract.getAirdropAmount(selectedAccount);
-        if (amount > 0) {
-            document.getElementById('eligibleAmount').textContent = `You are eligible to claim ${amount} tokens`;
-            document.getElementById('claimButton').disabled = false;
-        } else {
-            document.getElementById('eligibleAmount').textContent = `No airdrop available or already claimed`;
-        }
+        const transactions = await response.json();
+        return transactions.map(tx => `Tx Hash: ${tx.hash}, Amount: ${tx.amount}`).join('\n');
     } catch (error) {
         console.error(error);
-        document.getElementById('status').textContent = `Error: ${error.message}`;
+        return 'Failed to fetch transaction history';
     }
 }
 
-async function getTokenBalance() {
-    if (!provider) return;
-
-    try {
-        const balance = await ethersProvider.getBalance(selectedAccount);
-        document.getElementById('tokenBalance').textContent = `Your token balance: ${ethers.utils.formatEther(balance)} BNB`;
-    } catch (error) {
-        console.error(error);
-        document.getElementById('status').textContent = `Error: ${error.message}`;
-    }
-}
-
-async function claimAirdrop() {
-    if (!provider) return;
-    const signer = ethersProvider.getSigner();
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
-
-    try {
-        const tx = await contract.claimAirdrop();
-        document.getElementById('status').textContent = `Transaction sent: ${tx.hash}`;
-        await tx.wait();
-        document.getElementById('status').textContent = 'Airdrop claimed!';
-        document.getElementById('eligibleAmount').textContent = `You have already claimed your airdrop`;
-        document.getElementById('claimButton').disabled = true;
-        getTokenBalance(); // Refresh token balance after claim
-    } catch (error) {
-        console.error(error);
-        document.getElementById('status').textContent = `Error: ${error.message}`;
-    }
-}
-
-function disconnectWallet() {
-    provider = null;
-    selectedAccount = null;
-    ethersProvider = null;
-    contract = null;
-    document.getElementById('account').textContent = 'Not connected';
-    document.getElementById('connectButton').style.display = 'block';
-    document.getElementById('disconnectButton').style.display = 'none';
-    document.getElementById('eligibleAmount').textContent = '';
-    document.getElementById('tokenBalance').textContent = '';
-    document.getElementById('status').textContent = '';
-    document.getElementById('claimButton').disabled = true;
-}
-
-   document.getElementById('connectButton').addEventListener('click', connectWallet);
-   document.getElementById('disconnectButton').addEventListener('click', disconnectWallet);
-   document.getElementById('claimButton').addEventListener('click', claimAirdrop);
-    </script>
+// Initialize web3 and connect wallet when the page loads
+window.addEventListener('load', async () => {
+    await initWeb3(); // Initiate web3
+});
+</script>
 </body>
 </html>
-
