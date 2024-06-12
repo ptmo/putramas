@@ -174,7 +174,9 @@ function handleAccountsChanged(accounts) {
 
 async function checkNetwork() {
     const chainId = await provider.request({ method: 'eth_chainId' });
-    if (chainId !== '0x38') { // BSC Mainnet chain ID is 56 (0x38 in hexadecimal)
+
+    // BSC Mainnet chain ID is '0x38' (56 in decimal)
+    if (chainId !== '0x38' && chainId !== '56') {
         try {
             await provider.request({
                 method: 'wallet_switchEthereumChain',
