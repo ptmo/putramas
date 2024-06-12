@@ -128,6 +128,8 @@ const contractABI = [
 
 let provider;
 let selectedAccount;
+let ethersProvider;
+let contract;
 
 async function connectWallet() {
     if (window.ethereum) {
@@ -138,11 +140,14 @@ async function connectWallet() {
             provider.on("chainChanged", handleChainChanged);
             provider.on("accountsChanged", handleAccountsChanged);
             await checkNetwork();
-            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            ethersProvider = new ethers.providers.Web3Provider(provider);
             const accounts = await ethersProvider.listAccounts();
             selectedAccount = accounts[0];
             document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
+            document.getElementById('connectButton').style.display = 'none';
+            document.getElementById('disconnectButton').style.display = 'block';
             checkEligibility();
+            getTokenBalance();
         } catch (error) {
             console.error("Could not connect to wallet", error);
             document.getElementById('status').textContent = `Error: ${error.message}`;
@@ -157,9 +162,14 @@ function handleChainChanged() {
 }
 
 function handleAccountsChanged(accounts) {
-    selectedAccount = accounts[0];
-    document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
-    checkEligibility();
+    if (accounts.length === 0) {
+        disconnectWallet();
+    } else {
+        selectedAccount = accounts[0];
+        document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
+        checkEligibility();
+        getTokenBalance();
+    }
 }
 
 async function checkNetwork() {
@@ -199,8 +209,7 @@ async function checkNetwork() {
 
 async function checkEligibility() {
     if (!provider) return;
-    const ethersProvider = new ethers.providers.Web3Provider(provider);
-    const contract = new ethers.Contract(contractAddress, contractABI, ethersProvider);
+    contract = new ethers.Contract(contractAddress, contractABI, ethersProvider);
 
     try {
         const amount = await contract.getAirdropAmount(selectedAccount);
@@ -216,9 +225,20 @@ async function checkEligibility() {
     }
 }
 
+async function getTokenBalance() {
+    if (!provider) return;
+
+    try {
+        const balance = await ethersProvider.getBalance(selectedAccount);
+        document.getElementById('tokenBalance').textContent = `Your token balance: ${ethers.utils.formatEther(balance)} BNB`;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('status').textContent = `Error: ${error.message}`;
+    }
+}
+
 async function claimAirdrop() {
     if (!provider) return;
-    const ethersProvider = new ethers.providers.Web3Provider(provider);
     const signer = ethersProvider.getSigner();
     const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
@@ -229,14 +249,30 @@ async function claimAirdrop() {
         document.getElementById('status').textContent = 'Airdrop claimed!';
         document.getElementById('eligibleAmount').textContent = `You have already claimed your airdrop`;
         document.getElementById('claimButton').disabled = true;
+        getTokenBalance(); // Refresh token balance after claim
     } catch (error) {
         console.error(error);
         document.getElementById('status').textContent = `Error: ${error.message}`;
     }
 }
 
-document.getElementById('connectButton').addEventListener('click', connectWallet);
-document.getElementById('claimButton').addEventListener('click', claimAirdrop);
+function disconnectWallet() {
+    provider = null;
+    selectedAccount = null;
+    ethersProvider = null;
+    contract = null;
+    document.getElementById('account').textContent = 'Not connected';
+    document.getElementById('connectButton').style.display = 'block';
+    document.getElementById('disconnectButton').style.display = 'none';
+    document.getElementById('eligibleAmount').textContent = '';
+    document.getElementById('tokenBalance').textContent = '';
+    document.getElementById('status').textContent = '';
+    document.getElementById('claimButton').disabled = true;
+}
+
+   document.getElementById('connectButton').addEventListener('click', connectWallet);
+   document.getElementById('disconnectButton').addEventListener('click', disconnectWallet);
+   document.getElementById('claimButton').addEventListener('click', claimAirdrop);
     </script>
 </body>
 </html>
