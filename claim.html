@@ -162,11 +162,11 @@ async function connectWallet() {
 
 async function checkNetwork() {
     const chainId = await provider.request({ method: 'eth_chainId' });
-    if (chainId !== '0x38') { // BSC Mainnet chain ID is 56 (0x38 in hexadecimal)
+    if (chainId !== '56') { // BSC Mainnet chain ID is 56 (0x38 in hexadecimal)
         try {
             await provider.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x38' }]
+                params: [{ chainId: '56' }]
             });
         } catch (switchError) {
             if (switchError.code === 4902) {
@@ -176,7 +176,7 @@ async function checkNetwork() {
                         method: 'wallet_addEthereumChain',
                         params: [
                             {
-                                chainId: '0x38',
+                                chainId: '56',
                                 chainName: 'Binance Smart Chain Mainnet',
                                 nativeCurrency: {
                                     name: 'BNB',
