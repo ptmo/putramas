@@ -133,12 +133,8 @@ async function connectWallet() {
 
         try {
             await provider.request({ method: 'eth_requestAccounts' });
-            provider.on("chainChanged", checkNetwork);
-            provider.on("accountsChanged", (accounts) => {
-                selectedAccount = accounts[0];
-                document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
-                checkEligibility();
-            });
+            provider.on("chainChanged", handleChainChanged);
+            provider.on("accountsChanged", handleAccountsChanged);
             await checkNetwork();
             const ethersProvider = new ethers.providers.Web3Provider(provider);
             const accounts = await ethersProvider.listAccounts();
@@ -154,23 +150,32 @@ async function connectWallet() {
     }
 }
 
+function handleChainChanged() {
+    window.location.reload();
+}
+
+function handleAccountsChanged(accounts) {
+    selectedAccount = accounts[0];
+    document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
+    checkEligibility();
+}
+
 async function checkNetwork() {
     const chainId = await provider.request({ method: 'eth_chainId' });
-    if (chainId !== '56') { // BSC Mainnet chain ID is 56 (0x38 in hexadecimal)
+    if (chainId !== '0x38') { // BSC Mainnet chain ID is 56 (0x38 in hexadecimal)
         try {
             await provider.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '56' }]
+                params: [{ chainId: '0x38' }]
             });
         } catch (switchError) {
             if (switchError.code === 4902) {
-                // This error code indicates that the chain has not been added to MetaMask.
                 try {
                     await provider.request({
                         method: 'wallet_addEthereumChain',
                         params: [
                             {
-                                chainId: '56',
+                                chainId: '0x38',
                                 chainName: 'Binance Smart Chain Mainnet',
                                 nativeCurrency: {
                                     name: 'BNB',
@@ -230,7 +235,6 @@ async function claimAirdrop() {
 
 document.getElementById('connectButton').addEventListener('click', connectWallet);
 document.getElementById('claimButton').addEventListener('click', claimAirdrop);
-
     </script>
 </body>
 </html>
