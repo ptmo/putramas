@@ -160,12 +160,13 @@ async function connectWallet() {
         checkEligibility();
     } catch (error) {
         console.error("Could not connect to wallet", error);
+        document.getElementById('status').textContent = `Error: ${error.message}`;
     }
 }
 
 async function checkNetwork() {
     const chainId = await provider.request({ method: 'eth_chainId' });
-    if (chainId !== '56') { // BSC Mainnet chain ID is 56 (0x38 in hexadecimal)
+    if (chainId !== '56') { // BSC Mainnet chain ID in hex is 0x38
         try {
             await provider.request({
                 method: 'wallet_switchEthereumChain',
@@ -193,7 +194,11 @@ async function checkNetwork() {
                     });
                 } catch (addError) {
                     console.error(addError);
+                    document.getElementById('status').textContent = `Error: ${addError.message}`;
                 }
+            } else {
+                console.error(switchError);
+                document.getElementById('status').textContent = `Error: ${switchError.message}`;
             }
         }
     }
@@ -210,10 +215,11 @@ async function checkEligibility() {
             document.getElementById('eligibleAmount').textContent = `You are eligible to claim ${amount} tokens`;
             document.getElementById('claimButton').disabled = false;
         } else {
-            document.getElementById('eligibleAmount').textContent = `You have already claimed your airdrop`;
+            document.getElementById('eligibleAmount').textContent = `No airdrop available or already claimed`;
         }
     } catch (error) {
         console.error(error);
+        document.getElementById('status').textContent = `Error: ${error.message}`;
     }
 }
 
