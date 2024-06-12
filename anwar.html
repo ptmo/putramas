@@ -125,6 +125,23 @@
         <span>Putramas Official</span>
       </a>
 
+      <div id="ajaxContent">Loading...</div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'content.html', true);
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    document.getElementById('ajaxContent').innerHTML = xhr.responseText;
+                } else {
+                    document.getElementById('ajaxContent').innerHTML = 'Failed to load content.';
+                }
+            };
+            xhr.send();
+        });
+    </script>
+
       <nav id="navbar" class="navbar">
         <ul>
           <li><a class="nav-link scrollto active" href="index.html">Halaman</a></li>
