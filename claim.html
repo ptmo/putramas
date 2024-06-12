@@ -1,1 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airdrop Claim</title>
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ff9a9e 10%, #fad0c4 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    max-width: 400px;
+    margin: auto;
+}
+
+h1 {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+p {
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#status {
+    margin-top: 1rem;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Airdrop Claim</h1>
+        <button id="connectButton">Connect Wallet</button>
+        <p id="account">Not connected</p>
+        <p id="eligibleAmount">Checking eligibility...</p>
+        <button id="claimButton" disabled>Claim Airdrop</button>
+        <p id="status"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.4.4/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3modal@1.9.3/dist/index.js"></script>
+    <script>
+      const contractAddress = 'YOUR_CONTRACT_ADDRESS';
+const contractABI = [
+    {
+        "inputs": [],
+        "name": "claimAirdrop",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_address",
+                "type": "address"
+            }
+        ],
+        "name": "getAirdropAmount",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "AirdropClaimed",
+        "type": "event"
+    }
+];
+
+let provider;
+let selectedAccount;
+
+async function connectWallet() {
+    const providerOptions = {
+        walletconnect: {
+            package: WalletConnectProvider,
+            options: {
+                infuraId: "YOUR_INFURA_ID"
+            }
+        }
+    };
+
+    const web3Modal = new Web3Modal({
+        cacheProvider: false,
+        providerOptions
+    });
+
+    try {
+        provider = await web3Modal.connect();
+        provider.on("chainChanged", checkNetwork);
+        provider.on("accountsChanged", (accounts) => {
+            selectedAccount = accounts[0];
+            document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
+            checkEligibility();
+        });
+        await checkNetwork();
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const accounts = await ethersProvider.listAccounts();
+        selectedAccount = accounts[0];
+        document.getElementById('account').textContent = `Connected: ${selectedAccount}`;
+        checkEligibility();
+    } catch (error) {
+        console.error("Could not connect to wallet", error);
+    }
+}
+
+async function checkNetwork() {
+    const chainId = await provider.request({ method: 'eth_chainId' });
+    if (chainId !== '0x38') { // BSC Mainnet chain ID is 56 (0x38 in hexadecimal)
+        try {
+            await provider.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x38' }]
+            });
+        } catch (switchError) {
+            if (switchError.code === 4902) {
+                // This error code indicates that the chain has not been added to MetaMask.
+                try {
+                    await provider.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [
+                            {
+                                chainId: '0x38',
+                                chainName: 'Binance Smart Chain Mainnet',
+                                nativeCurrency: {
+                                    name: 'BNB',
+                                    symbol: 'BNB',
+                                    decimals: 18
+                                },
+                                rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                                blockExplorerUrls: ['https://bscscan.com/']
+                            }
+                        ]
+                    });
+                } catch (addError) {
+                    console.error(addError);
+                }
+            }
+        }
+    }
+}
+
+async function checkEligibility() {
+    if (!provider) return;
+    const ethersProvider = new ethers.providers.Web3Provider(provider);
+    const contract = new ethers.Contract(contractAddress, contractABI, ethersProvider);
+
+    try {
+        const amount = await contract.getAirdropAmount(selectedAccount);
+        if (amount > 0) {
+            document.getElementById('eligibleAmount').textContent = `You are eligible to claim ${amount} tokens`;
+            document.getElementById('claimButton').disabled = false;
+        } else {
+            document.getElementById('eligibleAmount').textContent = `You have already claimed your airdrop`;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function claimAirdrop() {
+    if (!provider) return;
+    const ethersProvider = new ethers.providers.Web3Provider(provider);
+    const signer = ethersProvider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+    try {
+        const tx = await contract.claimAirdrop();
+        document.getElementById('status').textContent = `Transaction sent: ${tx.hash}`;
+        await tx.wait();
+        document.getElementById('status').textContent = 'Airdrop claimed!';
+        document.getElementById('eligibleAmount').textContent = `You have already claimed your airdrop`;
+        document.getElementById('claimButton').disabled = true;
+    } catch (error) {
+        console.error(error);
+        document.getElementById('status').textContent = `Error: ${error.message}`;
+    }
+}
+
+document.getElementById('connectButton').addEventListener('click', connectWallet);
+document.getElementById('claimButton').addEventListener('click', claimAirdrop);
+    </script>
+</body>
+</html>
 
