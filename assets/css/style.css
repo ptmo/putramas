@@ -1,20 +1,15 @@
-/**
-* Template Name: FlexStart
-* Template URL: https://bootstrapmade.com/flexstart-bootstrap-startup-template/
-* Updated: Mar 17 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+.anonymous-pro-bold {
+  font-family: "Anonymous Pro", monospace;
+  font-weight: 700;
+  font-style: normal;
+}
 
-/*--------------------------------------------------------------
-# General
---------------------------------------------------------------*/
 :root {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: "Open Sans", sans-serif;
+  font-family: "Anonymous Pro", monospace;
   color: #444444;
 }
 
@@ -34,7 +29,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Nunito", sans-serif;
+  font-family: "Anonymous Pro", monospace;
 }
 
 /*--------------------------------------------------------------
@@ -188,7 +183,7 @@ section {
 }
 
 .header .logo img {
-  max-height: 40px;
+  max-height: 35px;
   margin-right: 6px;
 }
 
@@ -502,7 +497,7 @@ section {
 }
 
 .hero .btn-get-started span {
-  font-family: "Nunito", sans-serif;
+  font-family: "Anonymous Pro", monospace;
   font-weight: 600;
   font-size: 16px;
   letter-spacing: 1px;
@@ -602,7 +597,7 @@ section {
 }
 
 .about .btn-read-more span {
-  font-family: "Nunito", sans-serif;
+  font-family: "Anonymous Pro", monospace;
   font-weight: 600;
   font-size: 16px;
   letter-spacing: 1px;
