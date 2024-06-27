@@ -51,8 +51,8 @@
 </head>
 <body>
     <div class="container">
-        <h2>Create Ethereum Wallet</h2>
-        <button class="button" onclick="createWallet()">Create Wallet</button>
+        <h2>Create Ethereum Wallet - Putramas Official</h2>
+        <button id="createButton" class="button" onclick="createWallet()">Create Wallet</button>
         <div class="result">
             <p id="privateKey"></p>
             <p id="address"></p>
@@ -61,13 +61,15 @@
 
     <script>
         function createWallet() {
-            console.log('Tombol diklik');
             const wallet = ethers.Wallet.createRandom(); // Menggunakan ethers.js untuk membuat wallet baru
             const privateKey = wallet.privateKey;
             const address = wallet.address;
 
             document.getElementById('privateKey').textContent = 'Private Key: ' + privateKey;
             document.getElementById('address').textContent = 'Address: ' + address;
+
+            // Mengubah teks tombol setelah berhasil membuat wallet
+            document.getElementById('createButton').textContent = 'Create Wallet Again';
         }
     </script>
 </body>
