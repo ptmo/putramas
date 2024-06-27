@@ -99,10 +99,11 @@ h2 {
     border: 1px solid #ccc;
     border-radius: 8px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Menjadi 4 kolom */
+    grid-template-columns: repeat(4, 1fr); /* Membagi menjadi 4 kolom */
     gap: 10px;
     align-items: center;
     justify-items: center;
+    text-align: center; /* Penambahan penyesuaian untuk responsif */
 }
 
 .recovery-word {
@@ -112,4 +113,12 @@ h2 {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    width: 100%; /* Memastikan setiap kotak frase memiliki lebar yang sama */
+    box-sizing: border-box; /* Menghindari penambahan padding yang tidak terduga */
+}
+
+@media (max-width: 768px) {
+    .recovery-phrase {
+        grid-template-columns: repeat(3, 1fr); /* Pada layar yang lebih kecil, menjadi 3 kolom */
+    }
 }
