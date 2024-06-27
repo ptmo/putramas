@@ -101,8 +101,8 @@ h2 {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* Membagi menjadi 4 kolom */
     gap: 10px;
-    align-items: center;
-    justify-items: center;
+    align-items: auto;
+    justify-items: auto;
     text-align: center; /* Penyesuaian untuk responsif */
 }
 
@@ -121,7 +121,7 @@ h2 {
     max-width: 100%; /* Menyesuaikan lebar maksimal */
     overflow-wrap: break-word; /* Memecah kata saat overflow */
     height: auto; /* Mengatur tinggi otomatis */
-    max-height: 150px; /* Batas tinggi maksimal untuk kolom */
+    max-height: 200px; /* Batas tinggi maksimal untuk kolom */
     overflow-y: auto; /* Tampilkan scrollbar jika konten melebihi tinggi maksimal */
 }
 
