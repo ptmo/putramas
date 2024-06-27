@@ -1,1 +1,116 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: 'Anonymous Pro', monospace;
+}
+
+.container {
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.button {
+    background-color: #6fa0f9;
+    border: 1px solid #6fa0f9;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(111, 160, 249, 0.3), 0 4px 8px rgba(111, 160, 249, 0.2);
+}
+
+.button:hover {
+    background-color: #598de8;
+    box-shadow: 0 12px 20px rgba(111, 160, 249, 0.4), 0 6px 12px rgba(111, 160, 249, 0.3);
+}
+
+.button:active {
+    transform: translateY(2px);
+    box-shadow: 0 6px 10px rgba(111, 160, 249, 0.4), 0 3px 6px rgba(111, 160, 249, 0.3);
+}
+
+.wallet-info {
+    display: grid;
+    grid-template-columns: 1fr; /* Membagi grid menjadi 1 kolom untuk tampilan mobile */
+    gap: 20px; /* Jarak antar item dalam grid */
+    margin-top: 20px;
+}
+
+.wallet-item {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.wallet-label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.wallet-data {
+    font-size: 14px;
+    word-break: break-all;
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.copy-button {
+    margin-top: 10px; /* Menambahkan margin atas */
+    background-color: #6fa0f9;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+    background-color: #598de8;
+}
+
+.recovery-phrase {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    align-items: center;
+    justify-items: center;
+}
+
+.recovery-word {
+    font-size: 16px;
+    margin: 5px 0;
+    background-color: #ffffff;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
 
