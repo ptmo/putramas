@@ -117,7 +117,7 @@ h2 {
     box-sizing: border-box; /* Menghindari masalah dengan penambahan padding */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 650px) {
     .recovery-phrase {
         grid-template-columns: repeat(3, 1fr); /* Pada layar yang lebih kecil, menjadi 3 kolom */
     }
