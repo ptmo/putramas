@@ -10,7 +10,7 @@
     align-items: center;
     height: 100vh;
     background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
+    font-family: 'Anonymous Pro', monospace;
 }
 
 .container {
@@ -96,6 +96,26 @@ h2 {
 .copy-button:hover {
     background-color: #598de8;
 }
+
+.recovery-phrase {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.recovery-word {
+    font-size: 16px;
+    margin: 5px 0;
+    background-color: #ffffff;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
 </style>
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
 </head>
@@ -105,19 +125,19 @@ h2 {
         <button class="button" onclick="createWallet()">Create Wallet</button>
         <div class="wallet-info">
             <div class="wallet-item">
-                <div class="wallet-label">Private Key</div>
-                <div class="wallet-data" id="privateKey"></div>
-                <button class="copy-button" onclick="copyToClipboard('privateKey')">Copy</button>
+                <div class="wallet-label">Recovery Phrase</div>
+                <div class="recovery-phrase" id="recoveryPhrase"></div>
+                <button class="copy-button" onclick="copyRecoveryPhrase()">Copy Recovery Phrase</button>
             </div>
             <div class="wallet-item">
-                <div class="wallet-label">Recovery Phrase</div>
-                <div class="wallet-data" id="mnemonic"></div>
-                <button class="copy-button" onclick="copyToClipboard('mnemonic')">Copy</button>
+                <div class="wallet-label">Private Key</div>
+                <div class="wallet-data" id="privateKey"></div>
+                <button class="copy-button" onclick="copyToClipboard('privateKey')">Copy Private Key</button>
             </div>
             <div class="wallet-item">
                 <div class="wallet-label">Address</div>
                 <div class="wallet-data" id="address"></div>
-                <button class="copy-button" onclick="copyToClipboard('address')">Copy</button>
+                <button class="copy-button" onclick="copyToClipboard('address')">Copy Address</button>
             </div>
         </div>
     </div>
@@ -126,11 +146,20 @@ h2 {
         function createWallet() {
             const wallet = ethers.Wallet.createRandom(); // Generate random wallet
             const privateKey = wallet.privateKey;
-            const mnemonic = wallet.mnemonic.phrase; // Get the 12-word recovery phrase
+            const mnemonic = wallet.mnemonic.phrase.split(" "); // Get the 12-word recovery phrase as an array of words
             const address = wallet.address;
 
+            // Display recovery phrase in a single column format
+            const recoveryPhraseDiv = document.getElementById('recoveryPhrase');
+            recoveryPhraseDiv.innerHTML = ''; // Clear previous content
+            mnemonic.forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.classList.add('recovery-word');
+                wordDiv.textContent = word;
+                recoveryPhraseDiv.appendChild(wordDiv);
+            });
+
             document.getElementById('privateKey').textContent = privateKey;
-            document.getElementById('mnemonic').textContent = mnemonic;
             document.getElementById('address').textContent = address;
         }
 
@@ -139,6 +168,17 @@ h2 {
             const selection = window.getSelection();
             const range = document.createRange();
             range.selectNodeContents(el);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('copy');
+            selection.removeAllRanges();
+        }
+
+        function copyRecoveryPhrase() {
+            const recoveryPhraseDiv = document.getElementById('recoveryPhrase');
+            const range = document.createRange();
+            range.selectNodeContents(recoveryPhraseDiv);
+            const selection = window.getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
             document.execCommand('copy');
