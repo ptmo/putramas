@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ethereum Wallet with Recovery Phrase</title>
     <style>
-body {
+    body {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -52,19 +52,19 @@ h2 {
 }
 
 .wallet-info {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* Membagi grid menjadi 3 kolom */
+    gap: 20px; /* Jarak antar item dalam grid */
     margin-top: 20px;
 }
 
 .wallet-item {
-    flex: 1;
-    margin: 0 10px;
     padding: 15px;
     background-color: #f9f9f9;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .wallet-label {
@@ -119,6 +119,7 @@ h2 {
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
 </style>
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
 </head>
