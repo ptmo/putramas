@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Create Ethereum Wallet</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <style>
         body {
             display: flex;
@@ -60,6 +61,7 @@
 
     <script>
         function createWallet() {
+            console.log('Tombol diklik');
             const wallet = ethers.Wallet.createRandom(); // Menggunakan ethers.js untuk membuat wallet baru
             const privateKey = wallet.privateKey;
             const address = wallet.address;
