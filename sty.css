@@ -121,6 +121,8 @@ h2 {
     max-width: 100%; /* Menyesuaikan lebar maksimal */
     overflow-wrap: break-word; /* Memecah kata saat overflow */
     height: auto; /* Mengatur tinggi otomatis */
+    max-height: 200px; /* Batas tinggi maksimal untuk kolom */
+    overflow-y: auto; /* Tampilkan scrollbar jika konten melebihi tinggi maksimal */
 }
 
 .recovery-word {
