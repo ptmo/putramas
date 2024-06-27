@@ -1,62 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Create Ethereum Wallet with Recovery Phrase</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereum Wallet with Recovery Phrase</title>
+    <style>body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.button {
+    background-color: #6fa0f9;
+    border: 1px solid #6fa0f9;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(111, 160, 249, 0.3), 0 4px 8px rgba(111, 160, 249, 0.2);
+}
+
+.button:hover {
+    background-color: #598de8;
+    box-shadow: 0 12px 20px rgba(111, 160, 249, 0.4), 0 6px 12px rgba(111, 160, 249, 0.3);
+}
+
+.button:active {
+    transform: translateY(2px);
+    box-shadow: 0 6px 10px rgba(111, 160, 249, 0.4), 0 3px 6px rgba(111, 160, 249, 0.3);
+}
+
+.wallet-info {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.wallet-item {
+    flex: 1;
+    margin: 0 10px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wallet-label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.wallet-data {
+    font-size: 14px;
+    word-break: break-all;
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.copy-button {
+    background-color: #6fa0f9;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+    background-color: #598de8;
+}
+</style>
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            text-align: center;
-        }
-
-        .button {
-            background-color: #6fa0f9;
-            border: 1px solid #6fa0f9;
-            color: white;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 16px rgba(111, 160, 249, 0.3), 0 4px 8px rgba(111, 160, 249, 0.2);
-        }
-
-        .button:hover {
-            background-color: #598de8;
-            box-shadow: 0 12px 20px rgba(111, 160, 249, 0.4), 0 6px 12px rgba(111, 160, 249, 0.3);
-        }
-
-        .button:active {
-            transform: translateY(2px);
-            box-shadow: 0 6px 10px rgba(111, 160, 249, 0.4), 0 3px 6px rgba(111, 160, 249, 0.3);
-        }
-
-        .result {
-            margin-top: 24px;
-        }
-
-        .result p {
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
-        <h2>Create Ethereum Wallet with Recovery Phrase</h2>
+        <h2>Create Ethereum Wallet</h2>
         <button class="button" onclick="createWallet()">Create Wallet</button>
-        <div class="result">
-            <p id="privateKey"></p>
-            <p id="mnemonic"></p>
-            <p id="address"></p>
+        <div class="wallet-info">
+            <div class="wallet-item">
+                <div class="wallet-label">Private Key</div>
+                <div class="wallet-data" id="privateKey"></div>
+                <button class="copy-button" onclick="copyToClipboard('privateKey')">Copy</button>
+            </div>
+            <div class="wallet-item">
+                <div class="wallet-label">Recovery Phrase</div>
+                <div class="wallet-data" id="mnemonic"></div>
+                <button class="copy-button" onclick="copyToClipboard('mnemonic')">Copy</button>
+            </div>
+            <div class="wallet-item">
+                <div class="wallet-label">Address</div>
+                <div class="wallet-data" id="address"></div>
+                <button class="copy-button" onclick="copyToClipboard('address')">Copy</button>
+            </div>
         </div>
     </div>
 
@@ -67,9 +129,20 @@
             const mnemonic = wallet.mnemonic.phrase; // Get the 12-word recovery phrase
             const address = wallet.address;
 
-            document.getElementById('privateKey').textContent = 'Private Key: ' + privateKey;
-            document.getElementById('mnemonic').textContent = 'Recovery Phrase: ' + mnemonic;
-            document.getElementById('address').textContent = 'Address: ' + address;
+            document.getElementById('privateKey').textContent = privateKey;
+            document.getElementById('mnemonic').textContent = mnemonic;
+            document.getElementById('address').textContent = address;
+        }
+
+        function copyToClipboard(elementId) {
+            const el = document.getElementById(elementId);
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('copy');
+            selection.removeAllRanges();
         }
     </script>
 </body>
