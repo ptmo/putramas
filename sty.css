@@ -17,8 +17,6 @@ body {
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 8px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Membagi menjadi 4 kolom */
     gap: 10px;
     align-items: center;
     justify-items: center;
@@ -49,16 +47,4 @@ body {
 
 .copy-button:hover {
     background-color: #0056b3;
-}
-
-@media (max-width: 768px) {
-    .recovery-phrase {
-        grid-template-columns: repeat(2, 1fr); /* Pada layar yang lebih kecil, menjadi 2 kolom */
-    }
-}
-
-@media (max-width: 480px) {
-    .recovery-phrase {
-        grid-template-columns: repeat(1, 1fr); /* Pada layar yang lebih kecil, menjadi 1 kolom */
-    }
 }
