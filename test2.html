@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Ethereum Wallet</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2>Create Ethereum Wallet</h2>
+        <button class="copy-button" onclick="createWallet()">Create Wallet</button>
+        <div class="recovery-phrase" id="recoveryPhraseContainer">
+            <!-- Frase akan diisi melalui JavaScript -->
+        </div>
+        <button class="copy-button" id="copyPhraseButton" style="display:none;" onclick="copyPhrase()">Copy Phrase</button>
+        <p id="privateKeyContainer"></p>
+        <p id="addressContainer"></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.2.umd.min.js"></script>
+    <script>
+        function createWallet() {
+            const wallet = ethers.Wallet.createRandom();
+            const mnemonic = wallet.mnemonic.phrase.split(' ');
+
+            const recoveryPhraseContainer = document.getElementById('recoveryPhraseContainer');
+            recoveryPhraseContainer.innerHTML = ''; // Membersihkan konten sebelumnya
+
+            mnemonic.forEach(word => {
+                const wordElement = document.createElement('span');
+                wordElement.className = 'recovery-word';
+                wordElement.textContent = word;
+                recoveryPhraseContainer.appendChild(wordElement);
+            });
+
+            document.getElementById('privateKeyContainer').textContent = 'Private Key: ' + wallet.privateKey;
+            document.getElementById('addressContainer').textContent = 'Address: ' + wallet.address;
+
+            document.querySelector('.copy-button').textContent = 'Create Wallet Again';
+            document.getElementById('copyPhraseButton').style.display = 'block';
+        }
+
+        function copyPhrase() {
+            const recoveryPhraseContainer = document.getElementById('recoveryPhraseContainer');
+            const phrases = recoveryPhraseContainer.querySelectorAll('.recovery-word');
+            let phraseText = '';
+            phrases.forEach(phrase => {
+                phraseText += phrase.textContent + ' ';
+            });
+
+            // Trim the trailing space
+            phraseText = phraseText.trim();
+
+            // Create a temporary textarea element to hold the text
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = phraseText;
+            document.body.appendChild(tempTextarea);
+
+            // Select the text in the textarea
+            tempTextarea.select();
+            tempTextarea.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the text inside the textarea
+            document.execCommand('copy');
+
+            // Remove the temporary textarea
+            document.body.removeChild(tempTextarea);
+
+            alert('Phrase copied to clipboard');
+        }
+    </script>
+</body>
+</html>
 
