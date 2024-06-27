@@ -12,26 +12,13 @@
 
     <script>
         function createWallet() {
-            const wallet = ethereumjs.Wallet.generate();
-            const privateKey = wallet.getPrivateKeyString();
-            const address = wallet.getAddressString();
+            const wallet = ethers.Wallet.createRandom(); // Menggunakan ethers.js untuk membuat wallet baru
+            const privateKey = wallet.privateKey;
+            const address = wallet.address;
 
             document.getElementById('privateKey').textContent = 'Private Key: ' + privateKey;
             document.getElementById('address').textContent = 'Address: ' + address;
         }
     </script>
-    <script>const Wallet = require('ethereumjs-wallet').default;
-
-// Membuat dompet Ethereum baru
-const wallet = Wallet.generate();
-
-// Mendapatkan kunci pribadi dan alamat dompet
-const privateKey = wallet.getPrivateKeyString();
-const address = wallet.getAddressString();
-
-console.log('Private Key:', privateKey);
-console.log('Address:', address);
-</script>
 </body>
 </html>
-
