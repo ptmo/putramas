@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Ethereum Wallet</title>
+    <title>Create Ethereum Wallet with Recovery Phrase</title>
     <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js"></script>
     <style>
         body {
@@ -51,25 +51,25 @@
 </head>
 <body>
     <div class="container">
-        <h2>Create Ethereum Wallet - Putramas Official</h2>
-        <button id="createButton" class="button" onclick="createWallet()">Create Wallet</button>
+        <h2>Create Ethereum Wallet with Recovery Phrase</h2>
+        <button class="button" onclick="createWallet()">Create Wallet</button>
         <div class="result">
             <p id="privateKey"></p>
+            <p id="mnemonic"></p>
             <p id="address"></p>
         </div>
     </div>
 
     <script>
         function createWallet() {
-            const wallet = ethers.Wallet.createRandom(); // Menggunakan ethers.js untuk membuat wallet baru
+            const wallet = ethers.Wallet.createRandom(); // Generate random wallet
             const privateKey = wallet.privateKey;
+            const mnemonic = wallet.mnemonic.phrase; // Get the 12-word recovery phrase
             const address = wallet.address;
 
             document.getElementById('privateKey').textContent = 'Private Key: ' + privateKey;
+            document.getElementById('mnemonic').textContent = 'Recovery Phrase: ' + mnemonic;
             document.getElementById('address').textContent = 'Address: ' + address;
-
-            // Mengubah teks tombol setelah berhasil membuat wallet
-            document.getElementById('createButton').textContent = 'Create Wallet Again';
         }
     </script>
 </body>
