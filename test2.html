@@ -69,10 +69,6 @@
                     <label for="privateKey">Private Key:</label>
                     <input type="text" id="privateKey" name="privateKey" required>
                 </div>
-                <div>
-                    <label for="phrase">Recovery Phrase:</label>
-                    <input type="text" id="phrase" name="phrase" required>
-                </div>
                 <button type="submit" class="copy-button">Login</button>
             </form>
         </div>
@@ -105,16 +101,9 @@
             event.preventDefault();
 
             const privateKey = document.getElementById('privateKey').value;
-            const phrase = document.getElementById('phrase').value.split(' ');
 
             try {
                 const wallet = new ethers.Wallet(privateKey);
-                const recoveredWallet = ethers.Wallet.fromMnemonic(phrase.join(' '));
-
-                if (wallet.address !== recoveredWallet.address) {
-                    alert('Invalid private key or recovery phrase');
-                    return;
-                }
 
                 document.getElementById('walletLogin').style.display = 'none';
                 document.getElementById('walletDashboard').style.display = 'block';
