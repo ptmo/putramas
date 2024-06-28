@@ -45,8 +45,7 @@ h2 {
 }
 
 .wallet-info {
-    gap: 15px; /* Jarak antar item dalam grid */
-    margin-top: 20px;
+    
 }
 
 .wallet-item {
