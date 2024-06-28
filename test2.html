@@ -3,100 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Ethereum Wallet</title>
-    <style>body {
-    font-family: 'Anonymous Pro', monospace;
-}
+    <title>Ethereum Wallet Login</title>
+    <style>
+        body {
+            font-family: 'Anonymous Pro', monospace;
+        }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-.wallet-section {
-    margin-top: 20px;
-    width: 100%;
-    max-width: 600px;
-}
+        .wallet-section {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
 
-.recovery-phrase {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Membagi menjadi 4 kolom */
-    gap: 10px;
-    align-items: center;
-    justify-items: center;
-    text-align: center; /* Penyesuaian untuk responsif */
-    max-width: 100%;
-    box-sizing: border-box;
-}
+        .copy-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-.recovery-word {
-    font-size: 16px;
-    background-color: transparent;
-    padding: 5px;
-    border: none;
-    width: auto; /* Menyesuaikan lebar dengan konten */
-    box-sizing: border-box; /* Menghindari masalah dengan penambahan padding */
-}
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
 
-.copy-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-.copy-button:hover {
-    background-color: #0056b3;
-}
+        label {
+            font-weight: bold;
+        }
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-label {
-    font-weight: bold;
-}
-
-input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-    box-sizing: border-box;
-}
-</style>
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <!-- Wallet Creation Section -->
-        <div id="walletCreation" class="wallet-section">
-            <h2>Create Ethereum Wallet</h2>
-            <button class="copy-button" onclick="createWallet()">Create Wallet</button>
-            <div class="recovery-phrase" id="recoveryPhraseContainer"></div>
-            <button class="copy-button" id="copyPhraseButton" style="display:none;" onclick="copyPhrase()">Copy Phrase</button>
-            <p id="privateKeyContainer"></p>
-            <p id="addressContainer"></p>
-        </div>
-
         <!-- Wallet Login Section -->
-        <div id="walletLogin" class="wallet-section" style="display:none;">
+        <div id="walletLogin" class="wallet-section">
             <h2>Login to Ethereum Wallet</h2>
             <form onsubmit="loginWallet(event)">
                 <div>
@@ -134,107 +100,57 @@ input {
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.2.umd.min.js"></script>
-    <script>function createWallet() {
-    const wallet = ethers.Wallet.createRandom();
-    const mnemonic = wallet.mnemonic.phrase.split(' ');
+    <script>
+        async function loginWallet(event) {
+            event.preventDefault();
 
-    const recoveryPhraseContainer = document.getElementById('recoveryPhraseContainer');
-    recoveryPhraseContainer.innerHTML = ''; // Membersihkan konten sebelumnya
+            const privateKey = document.getElementById('privateKey').value;
+            const phrase = document.getElementById('phrase').value.split(' ');
 
-    mnemonic.forEach(word => {
-        const wordElement = document.createElement('span');
-        wordElement.className = 'recovery-word';
-        wordElement.textContent = word;
-        recoveryPhraseContainer.appendChild(wordElement);
-    });
+            try {
+                const wallet = new ethers.Wallet(privateKey);
+                const recoveredWallet = ethers.Wallet.fromMnemonic(phrase.join(' '));
 
-    document.getElementById('privateKeyContainer').textContent = 'Private Key: ' + wallet.privateKey;
-    document.getElementById('addressContainer').textContent = 'Address: ' + wallet.address;
+                if (wallet.address !== recoveredWallet.address) {
+                    alert('Invalid private key or recovery phrase');
+                    return;
+                }
 
-    document.querySelector('.copy-button').textContent = 'Create Wallet Again';
-    document.getElementById('copyPhraseButton').style.display = 'block';
-}
+                document.getElementById('walletLogin').style.display = 'none';
+                document.getElementById('walletDashboard').style.display = 'block';
 
-function copyPhrase() {
-    const recoveryPhraseContainer = document.getElementById('recoveryPhraseContainer');
-    const phrases = recoveryPhraseContainer.querySelectorAll('.recovery-word');
-    let phraseText = '';
-    phrases.forEach(phrase => {
-        phraseText += phrase.textContent + ' ';
-    });
-
-    // Trim the trailing space
-    phraseText = phraseText.trim();
-
-    // Create a temporary textarea element to hold the text
-    const tempTextarea = document.createElement('textarea');
-    tempTextarea.value = phraseText;
-    document.body.appendChild(tempTextarea);
-
-    // Select the text in the textarea
-    tempTextarea.select();
-    tempTextarea.setSelectionRange(0, 99999); // For mobile devices
-
-    // Copy the text inside the textarea
-    document.execCommand('copy');
-
-    // Remove the temporary textarea
-    document.body.removeChild(tempTextarea);
-
-    alert('Phrase copied to clipboard');
-}
-
-async function loginWallet(event) {
-    event.preventDefault();
-
-    const privateKey = document.getElementById('privateKey').value;
-    const phrase = document.getElementById('phrase').value.split(' ');
-
-    try {
-        const wallet = new ethers.Wallet(privateKey);
-        const recoveredWallet = ethers.Wallet.fromMnemonic(phrase.join(' '));
-
-        if (wallet.address !== recoveredWallet.address) {
-            alert('Invalid private key or recovery phrase');
-            return;
+                document.getElementById('walletAddress').textContent = 'Address: ' + wallet.address;
+                await displayBalance(wallet);
+            } catch (error) {
+                alert('Error logging in: ' + error.message);
+            }
         }
 
-        document.getElementById('walletCreation').style.display = 'none';
-        document.getElementById('walletLogin').style.display = 'none';
-        document.getElementById('walletDashboard').style.display = 'block';
+        async function displayBalance(wallet) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const balance = await provider.getBalance(wallet.address);
+            document.getElementById('walletBalance').textContent = 'Balance: ' + ethers.utils.formatEther(balance) + ' ETH';
+        }
 
-        document.getElementById('walletAddress').textContent = 'Address: ' + wallet.address;
-        await displayBalance(wallet);
-    } catch (error) {
-        alert('Error logging in: ' + error.message);
-    }
-}
+        async function sendTokens(event) {
+            event.preventDefault();
 
-async function displayBalance(wallet) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const balance = await provider.getBalance(wallet.address);
-    document.getElementById('walletBalance').textContent = 'Balance: ' + ethers.utils.formatEther(balance) + ' ETH';
-}
+            const recipient = document.getElementById('recipient').value;
+            const amount = document.getElementById('amount').value;
+            const privateKey = document.getElementById('privateKey').value;
 
-async function sendTokens(event) {
-    event.preventDefault();
+            try {
+                const wallet = new ethers.Wallet(privateKey, new ethers.providers.Web3Provider(window.ethereum));
+                const tx = await wallet.sendTransaction({
+                    to: recipient,
+                    value: ethers.utils.parseEther(amount)
+                });
 
-    const recipient = document.getElementById('recipient').value;
-    const amount = document.getElementById('amount').value;
-    const privateKey = document.getElementById('privateKey').value;
-
-    try {
-        const wallet = new ethers.Wallet(privateKey, new ethers.providers.Web3Provider(window.ethereum));
-        const tx = await wallet.sendTransaction({
-            to: recipient,
-            value: ethers.utils.parseEther(amount)
-        });
-
-        alert('Transaction sent! Tx Hash: ' + tx.hash);
-    } catch (error) {
-        alert('Error sending transaction: ' + error.message);
-    }
-}
-</script>
+                alert('Transaction sent! Tx Hash: ' + tx.hash);
+            } catch (error) {
+                alert('Error sending transaction: ' + error.message);
+            }
+        }
+    </script>
 </body>
 </html>
