@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethereum Wallet Login</title>
+    <title>Ether Wallet Login</title>
     <style>
         body {
             font-family: 'Anonymous Pro', monospace;
@@ -116,7 +116,7 @@
         }
 
         async function displayBalance(wallet) {
-            const provider = new ethers.providers.InfuraProvider("mainnet", "425153aebed51db9b56130ccc7c01080");
+            const provider = new ethers.providers.InfuraProvider("mainnet", "https://mainnet.infura.io/v3/2WwEhGgJUncXKc88mqFsKpCTsh1");
             const balance = await provider.getBalance(wallet.address);
             document.getElementById('walletBalance').textContent = 'Balance: ' + ethers.utils.formatEther(balance) + ' ETH';
         }
@@ -129,7 +129,7 @@
             const privateKey = document.getElementById('privateKey').value.trim();
 
             try {
-                const wallet = new ethers.Wallet(privateKey, new ethers.providers.JsonRpcProvider("https://mainnet.infura.io/v3/425153aebed51db9b56130ccc7c01080"));
+                const wallet = new ethers.Wallet(privateKey, new ethers.providers.JsonRpcProvider("https://mainnet.infura.io/v3/2WwEhGgJUncXKc88mqFsKpCTsh1"));
                 const tx = await wallet.sendTransaction({
                     to: recipient,
                     value: ethers.utils.parseEther(amount)
