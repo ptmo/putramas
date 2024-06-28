@@ -64,7 +64,7 @@
     <div class="container">
         <!-- Wallet Login Section -->
         <div id="walletLogin" class="wallet-section">
-            <h2>Login to Ethereum Wallet</h2>
+            <h2>Login to EVM Wallet</h2>
             <form onsubmit="loginWallet(event)">
                 <div>
                     <label for="privateKey">Private Key:</label>
@@ -116,7 +116,7 @@
         }
 
         async function displayBalance(wallet) {
-            const provider = new ethers.providers.InfuraProvider("mainnet", "425153aebed51db9b56130ccc7c01080"); // Ganti dengan API key Infura Anda
+            const provider = new ethers.providers.InfuraProvider("mainnet", "425153aebed51db9b56130ccc7c01080");
             const balance = await provider.getBalance(wallet.address);
             document.getElementById('walletBalance').textContent = 'Balance: ' + ethers.utils.formatEther(balance) + ' ETH';
         }
@@ -129,7 +129,7 @@
             const privateKey = document.getElementById('privateKey').value.trim();
 
             try {
-                const wallet = new ethers.Wallet(privateKey, new ethers.providers.JsonRpcProvider("https://mainnet.infura.io/v3/YOUR_INFURA_API_KEY")); // Ganti dengan API key Infura Anda
+                const wallet = new ethers.Wallet(privateKey, new ethers.providers.JsonRpcProvider("https://mainnet.infura.io/v3/425153aebed51db9b56130ccc7c01080"));
                 const tx = await wallet.sendTransaction({
                     to: recipient,
                     value: ethers.utils.parseEther(amount)
