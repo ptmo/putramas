@@ -98,22 +98,23 @@
 
     <script>
         async function loginWallet(event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            const privateKey = document.getElementById('privateKey').value.trim();
+    const privateKey = document.getElementById('privateKey').value.trim();
+    console.log('Private Key:', privateKey); // Tambahkan ini untuk debugging
 
-            try {
-                const wallet = new ethers.Wallet(privateKey);
+    try {
+        const wallet = new ethers.Wallet(privateKey);
 
-                document.getElementById('walletLogin').style.display = 'none';
-                document.getElementById('walletDashboard').style.display = 'block';
+        document.getElementById('walletLogin').style.display = 'none';
+        document.getElementById('walletDashboard').style.display = 'block';
 
-                document.getElementById('walletAddress').textContent = 'Address: ' + wallet.address;
-                await displayBalance(wallet);
-            } catch (error) {
-                alert('Error logging in: ' + error.message);
-            }
-        }
+        document.getElementById('walletAddress').textContent = 'Address: ' + wallet.address;
+        await displayBalance(wallet);
+    } catch (error) {
+        alert('Error logging in: ' + error.message);
+    }
+}
 
         async function displayBalance(wallet) {
             const provider = new ethers.providers.InfuraProvider("mainnet", "https://mainnet.infura.io/v3/2WwEhGgJUncXKc88mqFsKpCTsh1");
