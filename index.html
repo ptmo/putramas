@@ -32,34 +32,6 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
-  <style>body {
-    background-color: #EDEDED;
-}
-
-$player-height: 190px;
-$player-width: 430px;
-
-h1 {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 13pt;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: white;
-    cursor: default;
-}
-
-h4 {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 8pt;
-    font-weight: 400;
-    cursor: default;
-}
-
-h2 {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 13pt;
-}
-</style>
 </head>
 
 <body>
@@ -106,30 +78,6 @@ h2 {
         </div>
         <div class="col-lg-6 hero-img" data-aos="zoom-out" data-aos-delay="200">
           <img src="img/logo2.png" class="img-fluid" alt="putramas">
-        </div>
-        <div class="player">
-        <ul>
-            <li class="cover"><img src="img/logo2.png" alt="Cover"/></li>
-            <li class="info">
-                <div class="button-items">
-                    <audio id="music" preload="auto" loop>
-                        <source src="cirebonan.mp3" type="audio/mp3">
-                        <source src="cirebonan.ogg" type="audio/ogg">
-                    </audio>
-                    <div id="slider"><div id="elapsed"></div></div>
-                    <p id="timer">0:00</p>
-                    <div class="controls">
-                        <span class="expend">
-                            <svg class="step-backward" viewBox="0 0 25 25" xml:space="preserve">
-                                <g><polygon points="4.9,4.3 9,4.3 9,11.6 21.4,4.3 21.4,20.7 9,13.4 9,20.7 4.9,20.7"/></g>
-                            </svg>
-                        </span>
-                        <svg id="play" viewBox="0 0 25 25" xml:space="preserve"></svg>
-                        <svg id="pause" viewBox="0 0 25 25" xml:space="preserve" style="visibility: hidden;"></svg>
-                    </div>
-                </div>
-            </li>
-        </ul>
         </div>
       </div>
     </div>
@@ -422,54 +370,7 @@ sumber: www.wikipedia.com
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
-  <script>var music = document.getElementById("music");
-var playButton = document.getElementById("play");
-var pauseButton = document.getElementById("pause");
-var playhead = document.getElementById("elapsed");
-var timeline = document.getElementById("slider");
-var timer = document.getElementById("timer");
-var duration;
-
-pauseButton.style.visibility = "hidden";
-
-var timelineWidth = timeline.offsetWidth - playhead.offsetWidth;
-
-music.addEventListener("timeupdate", timeUpdate, false);
-music.addEventListener("loadedmetadata", function() {
-    duration = music.duration;
-    music.play(); // Auto-play ketika metadata sudah dimuat
-}, false);
-
-function timeUpdate() {
-    var playPercent = timelineWidth * (music.currentTime / duration);
-    playhead.style.width = playPercent + "px";
-
-    var secondsIn = Math.floor(music.currentTime);
-    var minutes = Math.floor(secondsIn / 60);
-    var seconds = secondsIn % 60;
-    if (seconds < 10) {
-        seconds = "0" + seconds;
-    }
-    timer.innerHTML = minutes + ":" + seconds;
-}
-
-playButton.onclick = function() {
-    music.play();
-    playButton.style.visibility = "hidden";
-    pauseButton.style.visibility = "visible";
-}
-
-pauseButton.onclick = function() {
-    music.pause();
-    playButton.style.visibility = "visible";
-    pauseButton.style.visibility = "hidden";
-}
-
-// Auto-play dan loop otomatis diaktifkan di elemen <audio>
-music.setAttribute("autoplay", "autoplay");
-music.setAttribute("loop", "loop");
- </script>
-
+  
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
 
