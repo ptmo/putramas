@@ -32,7 +32,11 @@
 
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
-  <style>$player-height: 190px;
+  <style>body {
+    background-color: #EDEDED;
+}
+
+$player-height: 190px;
 $player-width: 430px;
 
 h1 {
@@ -54,7 +58,8 @@ h4 {
 h2 {
     font-family: 'Open Sans', sans-serif;
     font-size: 13pt;
-}</style>
+}
+</style>
 </head>
 
 <body>
@@ -104,11 +109,8 @@ h2 {
         </div>
         <div class="player">
         <ul>
-            <li class="cover"><img src="http://i1285.photobucket.com/albums/a583/TheGreatOzz1/Hosted-Images/Noisy-Freeks-Image_zps4kilrxml.png" alt="Cover"/></li>
+            <li class="cover"><img src="img/logo2.png" alt="Cover"/></li>
             <li class="info">
-                <h1>The Noisy Freaks</h1>
-                <h4>Premiere</h4>
-                <h2>I Need You Back</h2>
                 <div class="button-items">
                     <audio id="music" preload="auto" loop>
                         <source src="cirebonan.mp3" type="audio/mp3">
@@ -442,12 +444,13 @@ function timeUpdate() {
     var playPercent = timelineWidth * (music.currentTime / duration);
     playhead.style.width = playPercent + "px";
 
-    var secondsIn = Math.floor(((music.currentTime / duration) / 3.5) * 100);
-    if (secondsIn <= 9) {
-        timer.innerHTML = "0:0" + secondsIn;
-    } else {
-        timer.innerHTML = "0:" + secondsIn;
+    var secondsIn = Math.floor(music.currentTime);
+    var minutes = Math.floor(secondsIn / 60);
+    var seconds = secondsIn % 60;
+    if (seconds < 10) {
+        seconds = "0" + seconds;
     }
+    timer.innerHTML = minutes + ":" + seconds;
 }
 
 playButton.onclick = function() {
@@ -461,7 +464,11 @@ pauseButton.onclick = function() {
     playButton.style.visibility = "visible";
     pauseButton.style.visibility = "hidden";
 }
-  </script>
+
+// Auto-play dan loop otomatis diaktifkan di elemen <audio>
+music.setAttribute("autoplay", "autoplay");
+music.setAttribute("loop", "loop");
+ </script>
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
