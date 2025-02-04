@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Gambar Tanpa Server</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/style-transfer"></script>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        canvas { border: 1px solid black; }
+    </style>
+</head>
+<body>
+    <h2>🔹 AI Gambar Tanpa Server 🔹</h2>
+    
+    <h3>1️⃣ AI Sketsa ke Gambar</h3>
+    <canvas id="canvas" width="300" height="300"></canvas><br>
+    <button onclick="clearCanvas()">Bersihkan</button>
+    <button onclick="processSketch()">Proses AI</button>
+
+    <h3>2️⃣ AI Pewarnaan Gambar</h3>
+    <input type="file" id="uploadBW">
+    <img id="outputBW" width="300">
+
+    <h3>3️⃣ AI Efek Lukisan</h3>
+    <input type="file" id="uploadArt">
+    <canvas id="outputArt"></canvas>
+
+    <script>
+        // 🔹 1. AI Sketsa ke Gambar
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let drawing = false;
+
+        canvas.addEventListener("mousedown", () => drawing = true);
+        canvas.addEventListener("mouseup", () => drawing = false);
+        canvas.addEventListener("mousemove", draw);
+
+        function draw(event) {
+            if (!drawing) return;
+            ctx.fillStyle = "black";
+            ctx.fillRect(event.offsetX, event.offsetY, 3, 3);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        async function processSketch() {
+            alert("🔄 AI sedang memproses sketsa... (Fitur ini membutuhkan model AI tambahan)");
+        }
+
+        // 🔹 2. AI Pewarnaan Gambar
+        document.getElementById("uploadBW").addEventListener("change", async function(event) {
+            alert("🔄 AI sedang mewarnai gambar... (Fitur ini membutuhkan model AI tambahan)");
+            const img = document.getElementById("outputBW");
+            img.src = URL.createObjectURL(event.target.files[0]);
+        });
+
+        // 🔹 3. AI Efek Lukisan
+        document.getElementById("uploadArt").addEventListener("change", async function(event) {
+            const model = await styleTransfer.load();
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(event.target.files[0]);
+
+            img.onload = async function() {
+                const canvas = document.getElementById("outputArt");
+                const stylizedImage = await model.transfer(img);
+                tf.browser.toPixels(stylizedImage, canvas);
+            };
+        });
+    </script>
+</body>
+</html>
